@@ -1,0 +1,20 @@
+{
+  "name": "particle-text",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc --watch | web-dev-server --node-resolve --watch --open",
+    "serve": "tsc | web-dev-server --node-resolve --open"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/three": "^0.159.0",
+    "typescript": "^5.3.3",
+    "@web/dev-server": "^0.4.1",
+    "three": "^0.159.0"
+  }
+}
