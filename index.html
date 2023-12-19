@@ -1,16 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Particle-text</title>
-		<style>
-			body { margin: 0; }
-			canvas {
-				filter: blur(2px);
+  <head>
+    <meta charset="utf-8" />
+    <title>Particle-text</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:wght@900&family=Source+Code+Pro:wght@200;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --main-bg-color: #fff;
+				--primary-color: #000;
+        --pad: 4rem;
+      }
+
+      html,
+      body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        background: var(--main-bg-color);
+      }
+
+      #wrapper {
+        position: fixed;
+        border: 1px solid var(--primary-color);
+        top: var(--pad);
+        bottom: var(--pad);
+        left: var(--pad);
+        right: var(--pad);
+        cursor: none;
+      }
+      #panel {
+        padding: 30px;
+				color: var(--primary-color);
+				line-height: 2.25em;
+        cursor: none;
+      }
+
+
+      header {
+				color: var(--primary-color);
+        font-family: Raleway;
+				font-size: 3.5em;
+      }
+
+			subheader {
+				font-family: Source Code Pro;
+				font-size: 1.5em;
 			}
-		</style>
-	</head>
-	<body>
-		<script type="module" src="/index.js"></script>
-	</body>
+
+      #cursor {
+        cursor: none;
+        position: absolute;
+        -webkit-user-select: none;
+        z-index: -1;
+      }
+
+      canvas:not(#cursor) {
+        position: absolute;
+        filter: blur(5px);
+        -webkit-user-select: none;
+        z-index: -1;
+        top: 0;
+        left: 0;
+      }
+
+
+    </style>
+  </head>
+  <script type="module" src="/index.js"></script>
+  <body>
+    <div id="wrapper">
+      <canvas id="cursor"></canvas>
+      <div id="panel">
+        <header>Christof Kosciuszko</header>
+        <subheader>experienced webdeveloper</subheader>
+        <a href="#">test</a>
+      </div>
+    </div>
+  </body>
 </html>
