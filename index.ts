@@ -1,94 +1,136 @@
 import * as THREE from 'three';
-import { getRandomIntRanged } from './helpers';
 import { Vector3 } from 'three';
 
 
-const mouse = {
-  x: 0,
-  y: 0
-}
+let mouseVec = new THREE.Vector2();
 const renderer = new THREE.WebGLRenderer();
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1);
+let mousedown = false;
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const ParticleShiftAmount = 200;
 const ParticleMaxZ = 500;
+const CamZ = ParticleMaxZ + 200;
 
 
-const cubes: Array<{
-  cube: THREE.Mesh,
-  goalPosition: Vector3,
+interface IParticle {
+  mesh: THREE.Mesh,
+  targetPosition: Vector3,
   material: THREE.MeshBasicMaterial
-}> = [];
-
-for (let i = 0; i < 20000; i++) {
-  const x = getRandomIntRanged(-1100, 1100)
-  const y = getRandomIntRanged(-1100, 1100)
-  const z = getRandomIntRanged(1, ParticleMaxZ)
-  const geometry = new THREE.SphereGeometry(1, 6, 6);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-  const cube = new THREE.Mesh(geometry, material);
-  cube.position.set(x, y, z)
-  cubes.push({
-    cube: cube,
-    goalPosition: cube.position,
-    material: material
-  });
-  scene.add(cube);
 }
 
-camera.position.set(0, 0, 500)
+const particles: Array<IParticle> = [];
+
+const bw = window.innerWidth / 4
+const bh = window.innerHeight / 4
+
+for (let i = 0; i < 9000; i++) {
+  const x = THREE.MathUtils.randInt(bw * -1, bw)
+  const y = THREE.MathUtils.randInt(bh * -1, bh)
+  const z = THREE.MathUtils.randInt(1, ParticleMaxZ)
+  const geometry = new THREE.SphereGeometry(1, 6, 6);
+  const material = new THREE.MeshBasicMaterial({ color: getHeightColor(z) })
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(x, y, z)
+  particles.push({
+    mesh: mesh,
+    targetPosition: mesh.position,
+    material: material
+  });
+  scene.add(mesh);
+}
+
+camera.position.set(0, 0, CamZ)
+
+// cursor red dot
+const geometry = new THREE.SphereGeometry(1, 6, 6);
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const cursorSphere = new THREE.Mesh(geometry, material);
+cursorSphere.position.z = CamZ - 50;
+scene.add(cursorSphere)
 
 // let lastSwarmUpdateTime = 0;
 
+function getHeightColor(zValue: number): THREE.Color {
+
+  const globalModifier = mousedown ? 0.76 : 0.86
+  const colorVal = (zValue / CamZ) + globalModifier
+  const redModifier = 0;
+  const greenModifier = 0.6;
+  const blueModifier = 0.5;
+  return new THREE.Color(
+    1 - colorVal + redModifier,
+    1 - colorVal + greenModifier,
+    1 - colorVal + blueModifier
+  )
+}
 
 
-function animate() {
+function mainLoop(particle: IParticle) {
 
-  const mx = mouse.x - window.innerWidth / 2
-  const my = mouse.y - window.innerHeight / 2
+  const meshVec3 = particle.mesh.position.clone();
+  const newVec3 = meshVec3.clone();
 
-  camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, (mx / 4000), 0.1)
-  camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, (my / 4000), 0.05)
+  if (mousedown) {
+    // circle around cursor
+    // const cursorRadius = 60;
+    // const toCursorDistance = new THREE.Vector2(meshVec3.x, meshVec3.y).distanceTo(mouseVec)
 
-  cubes.forEach((val, i) => {
-    const cpx = val.cube.position.x;
-    const cpy = val.cube.position.y;
-    const cpz = val.cube.position.z;
+    // if (toCursorDistance < cursorRadius) {
+    //   const angle = Math.atan2(meshVec3.y - mouseVec.x, meshVec3.x - mouseVec.y);
+    //   newVec3.setX(mouseVec.x + cursorRadius * Math.cos(angle))
+    //   newVec3.setY(mouseVec.y + cursorRadius * Math.sin(angle))
+    // }
+  } else if (meshVec3.distanceTo(meshVec3.clone().setZ(particle.targetPosition.z)) < 20) {
+    newVec3.setZ(THREE.MathUtils.randInt(1, ParticleMaxZ));
+  }
 
 
-    // if (val.cube.position.distanceTo(val.goalPosition) < 20) {
-    if (Math.abs(val.cube.position.z - val.goalPosition.z) < 20) {
-      const shift = ParticleShiftAmount;
-      const newX = getRandomIntRanged(cpx - shift, cpx + shift)
-      const newY = getRandomIntRanged(cpy - shift, cpy + shift)
-      let newZ = getRandomIntRanged(cpz - shift, cpz + shift)
+  particle.material.color = getHeightColor(meshVec3.z);
+  particle.targetPosition = newVec3.clone();
+}
 
-      if (newZ > ParticleMaxZ) newZ = ParticleMaxZ;
 
-      const newVec = new Vector3(newX, newY, newZ);
-      val.goalPosition = newVec;
 
-    }
+(function animate() {
 
-    const gpv = val.goalPosition;
-    const colorVal = gpv.z * 100 / ParticleMaxZ / 100
-    val.material.color = new THREE.Color(1 - colorVal, colorVal - 0.50, colorVal + 0.2);
+  camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, (mouseVec.x / 1000), 0.06)
+  camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, (mouseVec.y / 1000), 0.06)
 
-    // val.cube.position.x = THREE.MathUtils.lerp(cpx, gpv.x, 0.01);
-    // val.cube.position.y = THREE.MathUtils.lerp(cpy, gpv.y, 0.01);
-    val.cube.position.z = THREE.MathUtils.lerp(cpz, gpv.z, 0.01);
+  particles.forEach((particle) => {
+    const meshVec3 = particle.mesh.position;
+    const targetVec3 = particle.targetPosition;
+    const newIVec3 = new THREE.Vector3();
+    newIVec3.setX(THREE.MathUtils.lerp(meshVec3.x, targetVec3.x, 0.9));
+    newIVec3.setY(THREE.MathUtils.lerp(meshVec3.y, targetVec3.y, 0.9));
+    newIVec3.setZ(THREE.MathUtils.lerp(meshVec3.z, targetVec3.z, 0.0005));
+    particle.mesh.position.copy(newIVec3);
   })
 
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
-}
-animate()
+})()
+
+setInterval(() => {
+  particles.forEach(mainLoop)
+}, 100)
 
 document.addEventListener("mousemove", (event) => {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  mouseVec.setX((event.clientX - window.innerWidth / 2) / 18);
+  mouseVec.setY(((event.clientY - window.innerHeight / 2) * -1) / 17);
+  cursorSphere.position.x = mouseVec.x
+  cursorSphere.position.y = mouseVec.y
+})
+
+
+document.addEventListener("mousedown", (event) => {
+  mousedown = true;
+  particles.forEach(mainLoop)
+})
+
+document.addEventListener("mouseup", (event) => {
+  mousedown = false;
+  particles.forEach(mainLoop)
 })
