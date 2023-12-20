@@ -15,6 +15,18 @@ cursorCanvas.width = WIDTH;
 cursorCanvas.height = HEIGHT;
 
 
+const mouse: {
+  x: number
+  y: number
+  hovering: HTMLTextAreaElement | null
+  isDown: boolean
+} = {
+  x: -100,
+  y: -100,
+  hovering: null,
+  isDown: false
+}
+
 let mouseVec = new THREE.Vector2();
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 const scene = new THREE.Scene();
@@ -114,6 +126,45 @@ function mainLoop(particle: IParticle) {
 }
 
 
+const cursorDraw = () => {
+  const wrapperDOM = document.getElementById("wrapper");
+
+  const x = mouse.x - (wrapperDOM?.offsetLeft ?? 0);
+  const y = mouse.y - (wrapperDOM?.offsetTop ?? 0);
+  if (x < 0 || y < 0) {
+    cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+    return;
+  }
+
+  cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+  cursorCanvasContext.beginPath();
+  cursorCanvasContext.arc(x, y, 8, 0, 2 * Math.PI);
+
+  if (mouse.hovering && mouse.hovering.tagName === 'A') {
+    const target = mouse.hovering;
+    cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+    cursorCanvasContext.beginPath();
+    cursorCanvasContext.roundRect(
+      target.offsetLeft-5,
+      target.offsetTop-4,
+      target.offsetWidth+10,
+      target.offsetHeight+8,
+      8
+    );
+
+    if(mouse.isDown) {
+      cursorCanvasContext.fillStyle = "#000"
+      cursorCanvasContext.fill();
+    } else {
+      cursorCanvasContext.stroke();
+    }
+
+  } else {
+    if (mouse.isDown) cursorCanvasContext.fill()
+    cursorCanvasContext.stroke();
+  }
+}
+
 
 (function animate() {
 
@@ -123,45 +174,38 @@ function mainLoop(particle: IParticle) {
   particles.forEach(mainLoop);
 
   renderer.render(scene, camera)
+
+  // cursor animation
+  cursorDraw()
+
+
   requestAnimationFrame(animate)
-})()
+})();
+
 
 
 window.addEventListener("mousemove", (event) => {
   mouseVec.setX((event.clientX - WIDTH / 2) / 18);
   mouseVec.setY(((event.clientY - HEIGHT / 2) * -1) / 17);
-  cursorDraw(event.clientX, event.clientY, mousedown)
-
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
 })
-
-const cursorDraw = (x: number,y :number, _mousedown = false) => {
-  const wrapperDOM = document.getElementById("wrapper");
-
-  x = x - (wrapperDOM?.offsetLeft ?? 0);
-  y = y - (wrapperDOM?.offsetTop ?? 0);
-  if(x < 0 || y < 0) {
-    return;
-  }
-
-  cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-  cursorCanvasContext.beginPath();
-  cursorCanvasContext.arc(x, y, 8, 0, 2 * Math.PI);
-  if (_mousedown) cursorCanvasContext.fill()
-  cursorCanvasContext.stroke();
-}
-
 
 
 document.addEventListener("mousedown", (event) => {
   mousedown = true;
   particles.forEach(mainLoop)
-  cursorDraw(event.clientX, event.clientY, true);
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+  mouse.isDown = true;
 })
 
 document.addEventListener("mouseup", (event) => {
   mousedown = false;
   particles.forEach(mainLoop)
-  cursorDraw(event.clientX, event.clientY, false);
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+  mouse.isDown = false;
 })
 
 window.addEventListener("resize", (event) => {
@@ -170,5 +214,10 @@ window.addEventListener("resize", (event) => {
 
   renderer.setSize(WIDTH, HEIGHT);
 
+})
 
+document.addEventListener("mouseover", (event) => {
+  const target = event.target as HTMLTextAreaElement
+  mouse.hovering = target;
+  // console.log('mouseover', target.offsetLeft, target.offsetTop, target.offsetWidth, target.offsetHeight);
 })

@@ -22,19 +22,39 @@
         left: var(--pad);
         right: var(--pad);
         cursor: none;
+
       }
+
+      #wrapper::after {
+        content: "";
+        position: fixed;
+        top: var(--pad);
+        bottom: var(--pad);
+        left: var(--pad);
+        right: var(--pad);
+        background: radial-gradient(circle, rgba(0,0,0,0) 35%, rgba(255,255,255,1) 100%);
+        z-index: 0;
+        opacity: .65;
+      }
+
       #panel {
         position: relative;
         padding: 30px;
 				color: var(--primary-color);
 				line-height: 2.25em;
         cursor: none !important;
-        z-index: 1;
+        z-index: 2;
       }
 
 
       #panel a {
         cursor: none;
+        font-family: Source Code Pro;
+        color: #000;
+      }
+
+      #panel a:active {
+        color: #fff;
       }
 
       header {
@@ -52,7 +72,7 @@
         cursor: none;
         position: absolute;
         -webkit-user-select: none;
-        z-index: 0;
+        z-index: 1;
         top:0;
         bottom: 0;
       }
