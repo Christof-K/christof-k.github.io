@@ -127,16 +127,22 @@ function mainLoop(particle: IParticle) {
 })()
 
 
-document.addEventListener("mousemove", (event) => {
+window.addEventListener("mousemove", (event) => {
   mouseVec.setX((event.clientX - WIDTH / 2) / 18);
   mouseVec.setY(((event.clientY - HEIGHT / 2) * -1) / 17);
-  // cursorSphere.position.x = mouseVec.x
-  // cursorSphere.position.y = mouseVec.y
-  cursorDraw(event.offsetX, event.offsetY, mousedown)
+  cursorDraw(event.clientX, event.clientY, mousedown)
 
 })
 
 const cursorDraw = (x: number,y :number, _mousedown = false) => {
+  const wrapperDOM = document.getElementById("wrapper");
+
+  x = x - (wrapperDOM?.offsetLeft ?? 0);
+  y = y - (wrapperDOM?.offsetTop ?? 0);
+  if(x < 0 || y < 0) {
+    return;
+  }
+
   cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
   cursorCanvasContext.beginPath();
   cursorCanvasContext.arc(x, y, 8, 0, 2 * Math.PI);
@@ -149,13 +155,13 @@ const cursorDraw = (x: number,y :number, _mousedown = false) => {
 document.addEventListener("mousedown", (event) => {
   mousedown = true;
   particles.forEach(mainLoop)
-  cursorDraw(event.offsetX, event.offsetY, true);
+  cursorDraw(event.clientX, event.clientY, true);
 })
 
 document.addEventListener("mouseup", (event) => {
   mousedown = false;
   particles.forEach(mainLoop)
-  cursorDraw(event.offsetX, event.offsetY, false);
+  cursorDraw(event.clientX, event.clientY, false);
 })
 
 window.addEventListener("resize", (event) => {
