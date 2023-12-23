@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Vector3 } from 'three';
+import { cursorCompute, cursorDraw } from './cursor';
 
 const renderElement = document.getElementById("wrapper");
 if (!renderElement) throw new Error("renderElement#canvas-container not found");
@@ -15,30 +16,31 @@ cursorCanvas.width = WIDTH;
 cursorCanvas.height = HEIGHT;
 
 
-const mouse: {
+export interface IMouse {
   x: number
   y: number
+  radius: number
   hovering: HTMLTextAreaElement | null
   isDown: boolean
-} = {
-  x: -100,
-  y: -100,
-  hovering: null,
-  isDown: false
+  targetXY: [number, number] | null
+  sizeXY: [number, number]
+  targetSizeXY: [number, number] | null
+  targetRadius: number | null
+  interpolationVal: number
 }
 
-let mouseVec = new THREE.Vector2();
-const renderer = new THREE.WebGLRenderer({ alpha: true });
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, WIDTH / HEIGHT, 0.1);
-let mousedown = false;
-
-renderer.setSize(WIDTH, HEIGHT);
-renderElement.appendChild(renderer.domElement);
-
-const ParticleMaxZ = 200;
-const CamZ = ParticleMaxZ + (ParticleMaxZ / 10);
-
+const mouse: IMouse = {
+  x: -100,
+  y: -100,
+  radius: 10,
+  sizeXY: [10, 10],
+  hovering: null,
+  isDown: false,
+  targetRadius: null,
+  targetXY: null,
+  targetSizeXY: null,
+  interpolationVal: 1
+}
 
 interface IParticle {
   mesh: THREE.Mesh,
@@ -46,8 +48,17 @@ interface IParticle {
   material: THREE.MeshBasicMaterial
 }
 
-const particles: Array<IParticle> = [];
+let mouseVec = new THREE.Vector2();
+const renderer = new THREE.WebGLRenderer({ alpha: true });
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, WIDTH / HEIGHT, 0.1);
 
+renderer.setSize(WIDTH, HEIGHT);
+renderElement.appendChild(renderer.domElement);
+
+const ParticleMaxZ = 200;
+const CamZ = ParticleMaxZ + (ParticleMaxZ / 10);
+const particles: Array<IParticle> = [];
 const bw = WIDTH / 8
 const bh = HEIGHT / 8
 
@@ -69,18 +80,9 @@ for (let i = 0; i < THREE.MathUtils.clamp((WIDTH * HEIGHT / 100), 500, 4000); i+
 
 camera.position.set(0, 0, CamZ)
 
-// cursor red dot
-// const geometry = new THREE.SphereGeometry(1, 6, 6);
-// const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-// const cursorSphere = new THREE.Mesh(geometry, material);
-// cursorSphere.position.z = CamZ - 50;
-// scene.add(cursorSphere)
-
-// let lastSwarmUpdateTime = 0;
-
 function getHeightColor(zValue: number): THREE.Color {
 
-  const globalModifier = mousedown ? 0.56 : 0.86
+  const globalModifier = mouse.isDown ? 0.56 : 0.86
   const colorVal = (zValue / CamZ) + globalModifier
   const redModifier = 0;
   const greenModifier = 0.6;
@@ -121,49 +123,10 @@ function mainLoop(particle: IParticle) {
   const newIVec3 = new THREE.Vector3();
   newIVec3.setX(THREE.MathUtils.lerp(meshVec3.x, targetVec3.x, 0.9));
   newIVec3.setY(THREE.MathUtils.lerp(meshVec3.y, targetVec3.y, 0.9));
-  newIVec3.setZ(THREE.MathUtils.lerp(meshVec3.z, targetVec3.z, mousedown ? 0.0001 : 0.001));
+  newIVec3.setZ(THREE.MathUtils.lerp(meshVec3.z, targetVec3.z, mouse.isDown ? 0.0001 : 0.001));
   particle.mesh.position.copy(newIVec3);
 }
 
-
-const cursorDraw = () => {
-  const wrapperDOM = document.getElementById("wrapper");
-
-  const x = mouse.x - (wrapperDOM?.offsetLeft ?? 0);
-  const y = mouse.y - (wrapperDOM?.offsetTop ?? 0);
-  if (x < 0 || y < 0) {
-    cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-    return;
-  }
-
-  cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-  cursorCanvasContext.beginPath();
-  cursorCanvasContext.arc(x, y, 8, 0, 2 * Math.PI);
-
-  if (mouse.hovering && mouse.hovering.tagName === 'A') {
-    const target = mouse.hovering;
-    cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-    cursorCanvasContext.beginPath();
-    cursorCanvasContext.roundRect(
-      target.offsetLeft-5,
-      target.offsetTop-4,
-      target.offsetWidth+10,
-      target.offsetHeight+8,
-      8
-    );
-
-    if(mouse.isDown) {
-      cursorCanvasContext.fillStyle = "#000"
-      cursorCanvasContext.fill();
-    } else {
-      cursorCanvasContext.stroke();
-    }
-
-  } else {
-    if (mouse.isDown) cursorCanvasContext.fill()
-    cursorCanvasContext.stroke();
-  }
-}
 
 
 (function animate() {
@@ -172,28 +135,27 @@ const cursorDraw = () => {
   camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, (mouseVec.y / 600), 0.06)
 
   particles.forEach(mainLoop);
-
   renderer.render(scene, camera)
 
   // cursor animation
-  cursorDraw()
-
+  cursorCompute(mouse);
+  cursorDraw(mouse, cursorCanvasContext, cursorCanvas)
 
   requestAnimationFrame(animate)
 })();
 
 
-
+// ~~~~~~~~~ EVENTS ~~~~~~~~~
 window.addEventListener("mousemove", (event) => {
-  mouseVec.setX((event.clientX - WIDTH / 2) / 18);
-  mouseVec.setY(((event.clientY - HEIGHT / 2) * -1) / 17);
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  if (mouse.hovering === null) {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    mouseVec.setX((mouse.x - WIDTH / 2) / 18);
+    mouseVec.setY(((mouse.y - HEIGHT / 2) * -1) / 17);
+  }
 })
 
-
 document.addEventListener("mousedown", (event) => {
-  mousedown = true;
   particles.forEach(mainLoop)
   mouse.x = event.clientX;
   mouse.y = event.clientY;
@@ -201,23 +163,24 @@ document.addEventListener("mousedown", (event) => {
 })
 
 document.addEventListener("mouseup", (event) => {
-  mousedown = false;
   particles.forEach(mainLoop)
   mouse.x = event.clientX;
   mouse.y = event.clientY;
   mouse.isDown = false;
 })
 
+
+document.addEventListener("mouseover", (event) => {
+  const target = event.target as HTMLTextAreaElement;
+  if (target.tagName === 'A') {
+    mouse.hovering = target;
+  } else {
+    mouse.hovering = null;
+  }
+})
+
 window.addEventListener("resize", (event) => {
   WIDTH = renderElement.clientWidth;
   HEIGHT = renderElement.clientHeight;
-
   renderer.setSize(WIDTH, HEIGHT);
-
-})
-
-document.addEventListener("mouseover", (event) => {
-  const target = event.target as HTMLTextAreaElement
-  mouse.hovering = target;
-  // console.log('mouseover', target.offsetLeft, target.offsetTop, target.offsetWidth, target.offsetHeight);
 })

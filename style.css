@@ -21,7 +21,7 @@
         bottom: var(--pad);
         left: var(--pad);
         right: var(--pad);
-        cursor: none;
+        /* cursor: none; */
 
       }
 
@@ -42,13 +42,13 @@
         padding: 30px;
 				color: var(--primary-color);
 				line-height: 2.25em;
-        cursor: none !important;
+        /* cursor: none !important; */
         z-index: 2;
       }
 
 
       #panel a {
-        cursor: none;
+        /* cursor: none; */
         font-family: Source Code Pro;
         color: #000;
       }
@@ -69,7 +69,7 @@
 			}
 
       #cursor {
-        cursor: none;
+        /* cursor: none; */
         position: absolute;
         -webkit-user-select: none;
         z-index: 1;
