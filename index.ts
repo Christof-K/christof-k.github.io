@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Vector3 } from 'three';
-import { cursorCompute, cursorDraw } from './cursor';
+import { cursorComputeAndDraw } from './cursor';
 
 const renderElement = document.getElementById("wrapper");
 if (!renderElement) throw new Error("renderElement#canvas-container not found");
@@ -26,26 +26,25 @@ export interface IMouse {
   sizeXY: [number, number]
   targetSizeXY: [number, number] | null
   targetRadius: number | null
-  interpolationVal: number
 }
 
 const mouse: IMouse = {
   x: -100,
   y: -100,
-  radius: 10,
+  radius: 50,
   sizeXY: [10, 10],
   hovering: null,
   isDown: false,
   targetRadius: null,
   targetXY: null,
   targetSizeXY: null,
-  interpolationVal: 1
 }
 
 interface IParticle {
   mesh: THREE.Mesh,
   targetPosition: Vector3,
   material: THREE.MeshBasicMaterial
+  specialUntil?: number
 }
 
 let mouseVec = new THREE.Vector2();
@@ -67,7 +66,7 @@ for (let i = 0; i < THREE.MathUtils.clamp((WIDTH * HEIGHT / 100), 500, 4000); i+
   const y = THREE.MathUtils.randInt(bh * -1, bh)
   const z = THREE.MathUtils.randInt(1, ParticleMaxZ)
   const geometry = new THREE.SphereGeometry(1, 6, 6);
-  const material = new THREE.MeshBasicMaterial({ color: getHeightColor(z) })
+  const material = new THREE.MeshBasicMaterial({ color: getHeightColor(z, false) })
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(x, y, z)
   particles.push({
@@ -80,18 +79,20 @@ for (let i = 0; i < THREE.MathUtils.clamp((WIDTH * HEIGHT / 100), 500, 4000); i+
 
 camera.position.set(0, 0, CamZ)
 
-function getHeightColor(zValue: number): THREE.Color {
 
-  const globalModifier = mouse.isDown ? 0.56 : 0.86
-  const colorVal = (zValue / CamZ) + globalModifier
-  const redModifier = 0;
-  const greenModifier = 0.6;
-  const blueModifier = 0.5;
-  return new THREE.Color(
-    1 - colorVal + redModifier,
-    1 - colorVal + greenModifier,
-    1 - colorVal + blueModifier
-  )
+function getHeightColor(zValue: number, isSpecial: boolean): THREE.Color {
+
+  const C_blue = new THREE.Color(25 / 255, 133 / 255, 151 / 255);
+  const C_black = new THREE.Color(0, 0, 0);
+  const C_red = new THREE.Color(1, 0, 0);
+
+  const hm = (zValue / CamZ);
+
+  let resultColor = C_blue.lerp(C_black, hm)
+  if (isSpecial) resultColor = C_red;
+
+  if (mouse.isDown) resultColor = resultColor.lerp(C_black, -0.5)
+  return resultColor
 }
 
 
@@ -115,7 +116,14 @@ function mainLoop(particle: IParticle) {
   }
 
   particle.targetPosition = newVec3.clone();
-  particle.material.color = getHeightColor(meshVec3.z);
+
+  if (!mouse.isDown) {
+    if (THREE.MathUtils.randInt(0, 10000) === 0) {
+      particle.specialUntil = Date.now() + 3000
+    }
+
+    particle.material.color = getHeightColor(meshVec3.z, (particle?.specialUntil ?? 0) > Date.now());
+  }
 
 
   // assign
@@ -138,8 +146,7 @@ function mainLoop(particle: IParticle) {
   renderer.render(scene, camera)
 
   // cursor animation
-  cursorCompute(mouse);
-  cursorDraw(mouse, cursorCanvasContext, cursorCanvas)
+  cursorComputeAndDraw(mouse, cursorCanvasContext, cursorCanvas);
 
   requestAnimationFrame(animate)
 })();
@@ -157,15 +164,19 @@ window.addEventListener("mousemove", (event) => {
 
 document.addEventListener("mousedown", (event) => {
   particles.forEach(mainLoop)
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  if (!mouse.hovering) {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+  }
   mouse.isDown = true;
 })
 
 document.addEventListener("mouseup", (event) => {
   particles.forEach(mainLoop)
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  if (!mouse.hovering) {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+  }
   mouse.isDown = false;
 })
 

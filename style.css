@@ -1,6 +1,7 @@
 :root {
-        --main-bg-color: #fff;
+        --main-bg-color: #F6F7EB;
 				--primary-color: #000;
+        --special-color: #ff0000;
         --pad: 4rem;
       }
 
@@ -14,6 +15,11 @@
         background: var(--main-bg-color);
       }
 
+
+      special {
+        color: var(--special-color);
+      }
+
       #wrapper {
         position: fixed;
         border: 1px solid var(--primary-color);
@@ -21,8 +27,7 @@
         bottom: var(--pad);
         left: var(--pad);
         right: var(--pad);
-        /* cursor: none; */
-
+        cursor: none;
       }
 
       #wrapper::after {
@@ -32,7 +37,7 @@
         bottom: var(--pad);
         left: var(--pad);
         right: var(--pad);
-        background: radial-gradient(circle, rgba(0,0,0,0) 35%, rgba(255,255,255,1) 100%);
+        background: radial-gradient(circle, rgba(0,0,0,0) 30%, var(--main-bg-color) 100%);
         z-index: 0;
         opacity: .65;
       }
@@ -42,19 +47,19 @@
         padding: 30px;
 				color: var(--primary-color);
 				line-height: 2.25em;
-        /* cursor: none !important; */
         z-index: 2;
       }
 
 
       #panel a {
-        /* cursor: none; */
+        cursor: none;
         font-family: Source Code Pro;
-        color: #000;
+        color: var(--primary-color);
+        text-decoration: none;
       }
 
       #panel a:active {
-        color: #fff;
+        color: var(--main-bg-color);
       }
 
       header {
@@ -69,7 +74,7 @@
 			}
 
       #cursor {
-        /* cursor: none; */
+        cursor: none;
         position: absolute;
         -webkit-user-select: none;
         z-index: 1;
