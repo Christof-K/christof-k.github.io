@@ -1,92 +1,138 @@
 :root {
-        --main-bg-color: #F6F7EB;
-				--primary-color: #000;
-        --special-color: #ff0000;
-        --pad: 4rem;
-      }
+  --main-bg-color: #f6f7eb;
+  --primary-color: #000;
+  --special-color: #ff0000;
+  --pad: 4rem;
+  --panel-pad: 3rem;
+}
 
-      html,
-      body {
-        height: 100%;
-        padding: 0;
-        margin: 0;
-      }
-      body {
-        background: var(--main-bg-color);
-      }
+html,
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+body {
+  background: var(--main-bg-color);
+}
 
+special {
+  color: var(--special-color);
+}
 
-      special {
-        color: var(--special-color);
-      }
+#wrapper {
+  position: fixed;
+  border: 1px solid var(--primary-color);
+  top: var(--pad);
+  bottom: var(--pad);
+  left: var(--pad);
+  right: var(--pad);
+  font-size: 1.5rem;
+  overflow: hidden;
+}
 
-      #wrapper {
-        position: fixed;
-        border: 1px solid var(--primary-color);
-        top: var(--pad);
-        bottom: var(--pad);
-        left: var(--pad);
-        right: var(--pad);
-        cursor: none;
-      }
+#wrapper::after {
+  content: "";
+  position: fixed;
+  top: var(--pad);
+  bottom: var(--pad);
+  left: var(--pad);
+  right: var(--pad);
+  background: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0) 30%,
+    var(--main-bg-color) 100%
+  );
+  z-index: 0;
+  opacity: 0.65;
+}
 
-      #wrapper::after {
-        content: "";
-        position: fixed;
-        top: var(--pad);
-        bottom: var(--pad);
-        left: var(--pad);
-        right: var(--pad);
-        background: radial-gradient(circle, rgba(0,0,0,0) 30%, var(--main-bg-color) 100%);
-        z-index: 0;
-        opacity: .65;
-      }
+#panel {
+  position: relative;
+  padding: var(--panel-pad);
+  color: var(--primary-color);
+  line-height: 2.25em;
+  z-index: 2;
+}
 
-      #panel {
-        position: relative;
-        padding: 30px;
-				color: var(--primary-color);
-				line-height: 2.25em;
-        z-index: 2;
-      }
+#wrapper a {
+  cursor: none;
+  font-family: Source Code Pro;
+  color: var(--primary-color);
+  text-decoration: none;
+}
 
+#wrapper a:active {
+  color: var(--main-bg-color);
+}
 
-      #panel a {
-        cursor: none;
-        font-family: Source Code Pro;
-        color: var(--primary-color);
-        text-decoration: none;
-      }
+#icon-container {
+  position: absolute;
+  bottom: var(--panel-pad);
+  left: var(--panel-pad);
+  z-index: 2;
+}
 
-      #panel a:active {
-        color: var(--main-bg-color);
-      }
+#icon-container > img {
+  display: block;
+  margin-bottom: 10px;
+  width: 25px;
+}
 
-      header {
-				color: var(--primary-color);
-        font-family: Raleway;
-				font-size: 3.5em;
-      }
+#icon-container > img:last-child {
+  margin-bottom: 0;
+}
 
-			subheader {
-				font-family: Source Code Pro;
-				font-size: 1.5em;
-			}
+header {
+  color: var(--primary-color);
+  font-family: Raleway;
+  font-size: 3.5em;
+}
 
-      #cursor {
-        cursor: none;
-        position: absolute;
-        -webkit-user-select: none;
-        z-index: 1;
-        top:0;
-        bottom: 0;
-      }
+subheader {
+  font-family: Source Code Pro;
+  font-size: 1.5em;
+}
 
-      canvas:not(#cursor) {
-        position: absolute;
-        filter: blur(5px);
-        -webkit-user-select: none;
-        z-index: -1;
-        top: 0;
-        left: 0;
-      }
+#cursor {
+  cursor: none;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+}
+
+canvas:not(#cursor) {
+  position: absolute;
+  filter: blur(5px);
+  -webkit-user-select: none;
+  z-index: -1;
+  top: 0;
+  left: 0;
+}
+/*
+#noise-filter {
+  z-index: -1;
+  cursor: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: radial-gradient(
+      circle at 50% 50%,
+      rgba(0,0,0,1)
+      rgba(246, 247, 235, 1)
+    ),
+    url(/assets/svg/noise.svg);
+    animation: noise-breathe 5s infinite alternate-reverse linear;
+}
+
+@keyframes noise-breathe {
+  from {
+    transform: scale(1)
+  }
+  to {
+    transform: scale(1.25);
+  }
+} */

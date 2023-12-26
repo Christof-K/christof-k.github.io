@@ -61,7 +61,7 @@ const particles: Array<IParticle> = [];
 const bw = WIDTH / 8
 const bh = HEIGHT / 8
 
-for (let i = 0; i < THREE.MathUtils.clamp((WIDTH * HEIGHT / 100), 500, 4000); i++) {
+for (let i = 0; i < THREE.MathUtils.clamp((WIDTH * HEIGHT / 400), 500, 4000); i++) {
   const x = THREE.MathUtils.randInt(bw * -1, bw)
   const y = THREE.MathUtils.randInt(bh * -1, bh)
   const z = THREE.MathUtils.randInt(1, ParticleMaxZ)
@@ -94,6 +94,7 @@ function getHeightColor(zValue: number, isSpecial: boolean): THREE.Color {
   if (mouse.isDown) resultColor = resultColor.lerp(C_black, -0.5)
   return resultColor
 }
+
 
 
 function mainLoop(particle: IParticle) {
