@@ -4,6 +4,7 @@
   --special-color: #ff0000;
   --secondary-color: #1985A1;
   --pad: 6rem;
+  --pad-sides: 10rem;
   --panel-pad: 3rem;
 }
 
@@ -28,7 +29,7 @@ div {
 #wrapper {
   position: fixed;
   border: 1px solid var(--primary-color);
-  inset: var(--pad);
+  inset: var(--pad) var(--pad-sides);
   font-size: 1.5rem;
   overflow: hidden;
 }
@@ -36,7 +37,7 @@ div {
 #wrapper::after {
   content: "";
   position: fixed;
-  inset: var(--pad);
+  inset: var(--pad), var(--pad-sides);
   background: radial-gradient(
     circle,
     rgba(0, 0, 0, 0) 30%,
@@ -194,3 +195,22 @@ h:hover {
   border: 2px solid var(--special-color);
 }
 
+
+.icon {
+  background-repeat: no-repeat;
+  display: block;
+  width: 25px;
+  height: 25px;
+}
+
+.icon:active {
+  filter: invert(100%);
+}
+
+.icon.icon-ln {
+  background-image: url("assets/svg/iconmonstr-linkedin-1.svg");
+}
+
+.icon.icon-git {
+  background-image: url("/assets/svg/iconmonstr-github-1.svg");
+}
