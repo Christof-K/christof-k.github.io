@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Vector3 } from 'three';
 import { cursorComputeAndDraw } from './cursor';
 
+
 const renderElement = document.getElementById("wrapper");
 if (!renderElement) throw new Error("renderElement#canvas-container not found");
 
@@ -91,7 +92,9 @@ function getHeightColor(zValue: number, isSpecial: boolean): THREE.Color {
   let resultColor = C_blue.lerp(C_black, hm)
   if (isSpecial) resultColor = C_red;
 
-  if (mouse.isDown) resultColor = resultColor.lerp(C_black, -0.5)
+  // if (mouse.isDown) {
+    // resultColor = resultColor.lerp(C_black, -0.8)
+  // }
   return resultColor
 }
 
@@ -118,21 +121,20 @@ function mainLoop(particle: IParticle) {
 
   particle.targetPosition = newVec3.clone();
 
-  if (!mouse.isDown) {
+  // if (!mouse.isDown) {
     if (THREE.MathUtils.randInt(0, 10000) === 0) {
       particle.specialUntil = Date.now() + 3000
     }
 
     particle.material.color = getHeightColor(meshVec3.z, (particle?.specialUntil ?? 0) > Date.now());
-  }
-
+  // }
 
   // assign
   const targetVec3 = particle.targetPosition;
   const newIVec3 = new THREE.Vector3();
   newIVec3.setX(THREE.MathUtils.lerp(meshVec3.x, targetVec3.x, 0.9));
   newIVec3.setY(THREE.MathUtils.lerp(meshVec3.y, targetVec3.y, 0.9));
-  newIVec3.setZ(THREE.MathUtils.lerp(meshVec3.z, targetVec3.z, mouse.isDown ? 0.0001 : 0.001));
+  newIVec3.setZ(THREE.MathUtils.lerp(meshVec3.z, targetVec3.z, 0.001));
   particle.mesh.position.copy(newIVec3);
 }
 
@@ -148,7 +150,6 @@ function mainLoop(particle: IParticle) {
 
   // cursor animation
   cursorComputeAndDraw(mouse, cursorCanvasContext, cursorCanvas);
-
   requestAnimationFrame(animate)
 })();
 
@@ -164,27 +165,28 @@ window.addEventListener("mousemove", (event) => {
 })
 
 document.addEventListener("mousedown", (event) => {
-  particles.forEach(mainLoop)
   if (!mouse.hovering) {
     mouse.x = event.clientX;
     mouse.y = event.clientY;
   }
   mouse.isDown = true;
+  particles.forEach(mainLoop)
+
 })
 
 document.addEventListener("mouseup", (event) => {
-  particles.forEach(mainLoop)
   if (!mouse.hovering) {
     mouse.x = event.clientX;
     mouse.y = event.clientY;
   }
   mouse.isDown = false;
+  particles.forEach(mainLoop)
 })
 
 
 document.addEventListener("mouseover", (event) => {
   const target = event.target as HTMLTextAreaElement;
-  if (target.tagName === 'A') {
+  if (target.tagName === 'A' && target.className.indexOf('active') === -1) {
     mouse.hovering = target;
   } else {
     mouse.hovering = null;
@@ -196,3 +198,26 @@ window.addEventListener("resize", (event) => {
   HEIGHT = renderElement.clientHeight;
   renderer.setSize(WIDTH, HEIGHT);
 })
+
+const hashChange = () => {
+  const hash = window.location.hash.substring(1);
+
+  const elmTab = document.querySelector(`.tab-${hash}:not(.active)`);
+  if (elmTab) {
+    const oldActiveElms = document.querySelectorAll(".active");
+    if (oldActiveElms.length > 0) {
+      oldActiveElms.forEach(oldActiveElm => {
+        oldActiveElm.className = oldActiveElm.className.split('active').join('');
+      })
+    }
+
+    elmTab.className = `${elmTab.className} active`;
+    const elmNav = document.querySelector(`.nav-link-${hash}:not(.active)`);
+    if(elmNav) {
+      elmNav.className = `${elmNav.className} active`;
+    }
+
+  }
+}
+window.addEventListener("hashchange", hashChange);
+hashChange();

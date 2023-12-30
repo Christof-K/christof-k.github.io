@@ -13,8 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "@types/three": "^0.159.0",
-    "typescript": "^5.3.3",
     "@web/dev-server": "^0.4.1",
-    "three": "^0.159.0"
+    "three": "^0.159.0",
+    "typescript": "^5.3.3"
   }
 }
