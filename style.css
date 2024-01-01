@@ -285,7 +285,6 @@ h:hover {
   border: 1px solid var(--secondary-color);
   color: var(--main-bg-color);
   padding: 3px 4px;
-  border-radius: 6px;
   font-size: 0.7em;
   line-height: 1em;
   white-space: nowrap;
