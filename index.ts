@@ -185,6 +185,7 @@ window.addEventListener("resize", (event) => {
 const hashChange = () => {
   const hash = window.location.hash.substring(1);
 
+
   const elmTab = document.querySelector(`.tab-${hash}:not(.active)`);
   if (elmTab) {
     const oldActiveElms = document.querySelectorAll(".active");
@@ -200,6 +201,15 @@ const hashChange = () => {
       elmNav.className = `${elmNav.className} active`;
     }
 
+  }
+
+  const icon_container = document.getElementById('icon-container');
+  if (icon_container) {
+    if (hash !== "home") {
+      icon_container.className = `${icon_container.className} hidden-mobile`
+    } else {
+      icon_container.className = icon_container.className.split('hidden-mobile').join('');
+    }
   }
 }
 window.addEventListener("hashchange", hashChange);

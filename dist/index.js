@@ -145,6 +145,15 @@ const hashChange = () => {
             elmNav.className = `${elmNav.className} active`;
         }
     }
+    const icon_container = document.getElementById('icon-container');
+    if (icon_container) {
+        if (hash !== "home") {
+            icon_container.className = `${icon_container.className} hidden-mobile`;
+        }
+        else {
+            icon_container.className = icon_container.className.split('hidden-mobile').join('');
+        }
+    }
 };
 window.addEventListener("hashchange", hashChange);
 hashChange();
