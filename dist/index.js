@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { cursorComputeAndDraw } from './cursor';
+import { cursorComputeAndDraw } from './cursor.js';
 const renderElement = document.getElementById("wrapper");
 if (!renderElement)
     throw new Error("renderElement#canvas-container not found");

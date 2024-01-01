@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Vector3 } from 'three';
-import { cursorComputeAndDraw } from './cursor';
+import { cursorComputeAndDraw } from './cursor.js';
 
 
 const renderElement = document.getElementById("wrapper");
