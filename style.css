@@ -2,7 +2,7 @@
   --main-bg-color: #f6f7eb;
   --primary-color: #000;
   --special-color: #ff0000;
-  --secondary-color: #1985A1;
+  --secondary-color: #1985a1;
   --pad: 6rem;
   --pad-sides: 10rem;
   --panel-pad: 3rem;
@@ -16,6 +16,7 @@ body {
 }
 body {
   background: var(--main-bg-color);
+  font-family: Source Code Pro;
 }
 
 special {
@@ -34,6 +35,11 @@ div {
   overflow: hidden;
 }
 
+#nav {
+  font-size: 1.5rem;
+  line-height: 3rem !important;
+}
+
 #wrapper::after {
   content: "";
   position: fixed;
@@ -50,12 +56,13 @@ div {
 #panel {
   position: relative;
   color: var(--primary-color);
-  line-height: 2.25em;
   z-index: 2;
   display: flex;
   flex-direction: column;
   height: 100%;
   cursor: none;
+  font-size: 1rem;
+  line-height: 1.25rem;
 }
 
 #wrapper a {
@@ -82,12 +89,12 @@ div {
 header {
   color: var(--primary-color);
   font-family: Raleway;
-  font-size: 3.5em;
+  font-size: 4.5em;
 }
 
-subheader {
+.subheader {
   font-family: Source Code Pro;
-  font-size: 1.5em;
+  font-size: 2em;
 }
 
 #cursor {
@@ -96,6 +103,8 @@ subheader {
   z-index: 1;
   top: 0;
   bottom: 0;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 canvas:not(#cursor) {
@@ -113,6 +122,7 @@ canvas:not(#cursor) {
   right: 0;
   text-align: right;
   width: 200px;
+  line-height: 1.5rem;
 }
 
 .tab:not(.active) {
@@ -128,6 +138,7 @@ canvas:not(#cursor) {
 
 #header-wrapper {
   padding: var(--panel-pad);
+  line-height: 3em;
 }
 
 #nav {
@@ -149,7 +160,6 @@ canvas:not(#cursor) {
 
 #body-content {
   flex: 1;
-  line-height: 2.15rem;
   opacity: 0;
   animation: body-content-load 800ms ease 200ms;
   animation-fill-mode: forwards;
@@ -173,9 +183,7 @@ h:hover {
   position: absolute;
   inset: 0;
   overflow-y: scroll;
-
 }
-
 
 /* width */
 ::-webkit-scrollbar {
@@ -188,13 +196,12 @@ h:hover {
 
 ::-webkit-scrollbar-thumb {
   background: transparent;
-  border: 2px solid var(--primary-color)
+  border: 2px solid var(--primary-color);
 }
 
 ::-webkit-scrollbar-thumb:hover {
   border: 2px solid var(--special-color);
 }
-
 
 .icon {
   background-repeat: no-repeat;
@@ -213,4 +220,46 @@ h:hover {
 
 .icon.icon-git {
   background-image: url("/assets/svg/iconmonstr-github-1.svg");
+}
+
+.pill {
+  background-color: var(--secondary-color);
+  color: var(--main-bg-color);
+  padding: 3px 4px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  line-height: 1rem;
+  white-space: nowrap;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.flex-cols {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.position-tab {
+  position: relative;
+  /* background-color: var(--main-bg-color); */
+
+  padding: 10px;
+  /* border: 1px solid var(--secondary-color); */
+  margin-right: 20px;
+  margin-bottom: 25px;
+  box-shadow: rgba(25, 133, 161, 0.4) 5px 5px, rgba(25, 133, 161, 0.3) 10px 10px,
+    rgba(25, 133, 161, 0.2) 15px 15px, rgba(25, 133, 161, 0.1) 20px 20px,
+    rgba(25, 133, 161, 0.05) 25px 25px;
+}
+
+
+.position-tab h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.position-tab ul {
+  font-size: 1rem;
+  line-height: 1.25rem;
 }
