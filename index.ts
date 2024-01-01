@@ -205,7 +205,7 @@ const hashChange = () => {
 
   const icon_container = document.getElementById('icon-container');
   if (icon_container) {
-    if (hash !== "home") {
+    if (hash !== "home" && hash !== "") {
       icon_container.className = `${icon_container.className} hidden-mobile`
     } else {
       icon_container.className = icon_container.className.split('hidden-mobile').join('');
