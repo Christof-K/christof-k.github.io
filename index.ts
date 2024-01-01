@@ -66,7 +66,7 @@ for (let i = 0; i < THREE.MathUtils.clamp((WIDTH * HEIGHT / 400), 500, 4000); i+
   const x = THREE.MathUtils.randInt(bw * -1, bw)
   const y = THREE.MathUtils.randInt(bh * -1, bh)
   const z = THREE.MathUtils.randInt(1, ParticleMaxZ)
-  const geometry = new THREE.SphereGeometry(1, 6, 6);
+  const geometry = new THREE.SphereGeometry(0.2, 4, 4);
   const material = new THREE.MeshBasicMaterial({ color: getHeightColor(z, false) })
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(x, y, z)
@@ -91,10 +91,6 @@ function getHeightColor(zValue: number, isSpecial: boolean): THREE.Color {
 
   let resultColor = C_blue.lerp(C_black, hm)
   if (isSpecial) resultColor = C_red;
-
-  // if (mouse.isDown) {
-    // resultColor = resultColor.lerp(C_black, -0.8)
-  // }
   return resultColor
 }
 
@@ -104,30 +100,17 @@ function mainLoop(particle: IParticle) {
 
   const meshVec3 = particle.mesh.position.clone();
   const newVec3 = particle.targetPosition.clone();
-
-  // circle around cursor
-  // const cursorRadius = 60;
-  // const toCursorDistance = new THREE.Vector2(meshVec3.x, meshVec3.y).distanceTo(mouseVec)
-
-  // if (toCursorDistance < cursorRadius) {
-  //   const angle = Math.atan2(meshVec3.y - mouseVec.x, meshVec3.x - mouseVec.y);
-  //   newVec3.setX(mouseVec.x + cursorRadius * Math.cos(angle))
-  //   newVec3.setY(mouseVec.y + cursorRadius * Math.sin(angle))
-  // }
-
   if (Math.abs(meshVec3.z - particle.targetPosition.z) < 30) {
     newVec3.setZ(THREE.MathUtils.randInt(1, ParticleMaxZ));
   }
 
   particle.targetPosition = newVec3.clone();
 
-  // if (!mouse.isDown) {
-    if (THREE.MathUtils.randInt(0, 10000) === 0) {
-      particle.specialUntil = Date.now() + 3000
-    }
+  if (THREE.MathUtils.randInt(0, 10000) === 0) {
+    particle.specialUntil = Date.now() + 3000
+  }
 
-    particle.material.color = getHeightColor(meshVec3.z, (particle?.specialUntil ?? 0) > Date.now());
-  // }
+  particle.material.color = getHeightColor(meshVec3.z, (particle?.specialUntil ?? 0) > Date.now());
 
   // assign
   const targetVec3 = particle.targetPosition;
@@ -213,7 +196,7 @@ const hashChange = () => {
 
     elmTab.className = `${elmTab.className} active`;
     const elmNav = document.querySelector(`.nav-link-${hash}:not(.active)`);
-    if(elmNav) {
+    if (elmNav) {
       elmNav.className = `${elmNav.className} active`;
     }
 
