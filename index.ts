@@ -214,3 +214,15 @@ const hashChange = () => {
 }
 window.addEventListener("hashchange", hashChange);
 hashChange();
+
+
+window.addEventListener("load", () => {
+  const ls = document.getElementById("loading-screen");
+  if(ls) {
+    ls.remove()
+  }
+  const wrapper = document.getElementById("wrapper");
+  if(wrapper) {
+    wrapper.className = "blur-out"
+  }
+})
