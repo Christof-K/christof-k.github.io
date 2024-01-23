@@ -70,7 +70,7 @@ div {
 #wrapper {
   background: var(--main-bg-color);
   position: fixed;
-  inset: var(--pad) var(--pad-sides);
+  inset: var(--pad-md);
   font-size: 1.5em;
   overflow: hidden;
   box-shadow: rgba(25, 133, 161, 0.4) 5px 5px, rgba(25, 133, 161, 0.3) 10px 10px,
@@ -359,11 +359,7 @@ h:hover {
   }
 }
 
-@media screen and (max-width: 1366px) {
-  #wrapper {
-    inset: var(--pad-md);
-  }
-}
+
 
 @media screen and (max-width: 1200px) {
   #body-wrapper {
