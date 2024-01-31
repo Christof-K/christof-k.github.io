@@ -7,55 +7,38 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="style.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+    <script defer src="components/NavLink.js"></script>
+    <script defer src="components/Tab.js"></script>
+    <script defer src="components/JobPosition.js"></script>
+    <script defer src="components/ProjectItem.js"></script>
+    <script defer src="components/Header.js"></script>
+
     <script type="importmap">
       {
         "imports": {
-          "three": "/dist/three.js"
+          "three": "/assets/three.js"
         }
       }
     </script>
+    <script type="module" src="index.js"></script>
   </head>
-  <script type="module" src="dist/index.js"></script>
   <body>
     <div id="wrapper">
       <div id="panel">
         <div id="header-wrapper">
-          <header>
-            <h>C</h><h>h</h><h>r</h><h>i</h><h>s</h><h>t</h><h>o</h><h>f</h>
-            <h>K</h><h>o</h><h>s</h><h>c</h><h>i</h><h>u</h><h>s</h><h>z</h
-            ><h>k</h><h>o</h>
-          </header>
+          <name-header>
+            Christof Kosciuszko
+          </name-header>
           <div class="subheader">
             <special>experienced</special> webdeveloper
           </div>
         </div>
+
         <div id="body-wrapper">
           <div id="nav">
             <div id="nav-links">
-              <div>
-                <a class="nav-link active nav-link-home" href="#home">Home</a>
-              </div>
-              <div>
-                <a class="nav-link nav-link-projects" href="#projects"
-                  >Projects</a
-                >
-              </div>
-              <div>
-                <a class="nav-link nav-link-positions" href="#positions"
-                  >Positions</a
-                >
-              </div>
-              <div>
-                <a
-                  target="_blank"
-                  rel="noopener"
-                  href="https://forms.gle/M7x7sXqhqxN697oN8"
-                  >Contact form</a
-                >
-              </div>
-              <!-- <div>
-                <a class="nav-link nav-link-unknown" href="#unknown">???</a>
-              </div>  -->
             </div>
             <div id="icon-container">
               <div>
@@ -81,237 +64,6 @@
 
           <div id="body-content">
             <div class="scroll-wrapper">
-              <div class="panel-bottom-right tab active tab-home">
-                I am a <special>dedicated</special> enthusiast of web
-                applications, with a fervor for crafting
-                <special>exceptional</special> user interfaces and experiences.
-              </div>
-              <div class="tab tab-positions">
-                <div class="position-tab">
-                  <div class="flex-cols">
-                    <h4 class="flex-1">
-                      Full-Stack Developer - Companion
-                      <small>(SFA system)</small>
-                    </h4>
-                    <div>2021 - 2023</div>
-                  </div>
-                  <div>
-                    <span class="pill">Typescript</span>
-                    <span class="pill">React</span>
-                    <span class="pill">PHP 7-8.x</span>
-                    <span class="pill">Symfony 5</span>
-                  </div>
-                  <ul>
-                    <li>
-                      Participated in the full development life cycle, including
-                      requirements gathering, planning, testing, and deployment
-                    </li>
-                    <li>
-                      Mentored junior developer and contributed to team
-                      knowledge sharing and code reviews
-                    </li>
-                    <li>
-                      Utilized type checking and strong typing provided by
-                      TypeScript to improve code quality and prevent runtime
-                      errors
-                    </li>
-                    <li>
-                      Designed and executed intuitive and visually appealing
-                      interfaces solutions based on clients needs
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="position-tab">
-                  <div class="flex-cols">
-                    <h4 class="flex-1">
-                      PHP Developer - AXL Dynamics
-                      <small>(Multiple projects)</small>
-                    </h4>
-                    <div>2020 - 2021</div>
-                  </div>
-                  <div>
-                    <span class="pill">PHP 7.x</span>
-                    <span class="pill">Symfony 4</span>
-                    <span class="pill">PostgreSQL</span>
-                    <span class="pill">Bootstrap 4</span>
-                    <span class="pill">Laravel</span>
-                    <span class="pill">Vue.js</span>
-                  </div>
-                  <div class="flex-cols">
-                    <h4 class="flex-1">
-                      Full-Stack Developer - Beauty Company
-                      <small>(Custom E-Commerce platform)</small>
-                    </h4>
-                    <div>2014 - 2020</div>
-                  </div>
-                  <div>
-                    <span class="pill">PHP 5-7.x</span>
-                    <span class="pill">CakePHP</span>
-                    <span class="pill">jQuery</span>
-                    <span class="pill">MySQL</span>
-                    <span class="pill">Bootstrap 3</span>
-                  </div>
-                  <ul>
-                    <li>
-                      Worked with RESTful APIs and integrated third-party
-                      services
-                    </li>
-                    <li>
-                      Created and maintained materialized views to pre-aggregate
-                      data and improve query performance
-                    </li>
-                    <li>
-                      Implemented and maintained MySQL table indexes to improve
-                      query performance and speed up data retrieval
-                    </li>
-                    <li>
-                      Implemented features such as authentication,
-                      authorization, data validation, and CRUD operations
-                    </li>
-                    <li>
-                      Provided technical support and troubleshooting for
-                      production environments
-                    </li>
-                    <li>
-                      Troubleshooted and debugged code to fix issues and improve
-                      application performance
-                    </li>
-                    <li>
-                      Used techniques such as lazy loading to reduce the number
-                      of requests made to the server and improve page
-                      performance
-                    </li>
-                    <li>
-                      Utilized Redis caching with PHP to reduce server load and
-                      improve response times
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="tab tab-projects">
-
-                <div class="position-tab">
-                  <div class="flex-cols">
-                    <h4>
-                      <a
-                        target="_blank"
-                        rel="noopener"
-                        href="https://tankup.web.app/"
-                        >TankUP PWA
-                      </a>
-                    </h4>
-                  </div>
-                  <div>
-                    <span class="pill">Typescript</span>
-                    <span class="pill">Pre-react</span>
-                    <span class="pill">Firebase</span>
-                    <span class="pill">MongoDB</span>
-                    <span class="pill">Node.js</span>
-                    <span class="pill">Deno</span>
-                    <div>
-                      <small>
-                        Proof of concept filterable, sortable listing of Queensland fuel price index.<br />
-                        Find lowest price/closest or combined option to tank up, add your private by brand discounts and more.
-                        Location based app - works only in Queensland, Australia.
-                      </small>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="position-tab">
-                  <div class="flex-cols">
-                    <h4>
-                      <a
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/Christof-K/christof-k.github.io"
-                        >This portfolio/resume site
-                      </a>
-                    </h4>
-                  </div>
-                  <div>
-                    <span class="pill">Typescript</span>
-                    <span class="pill">Three.js</span>
-
-                  </div>
-                </div>
-
-                <div class="position-tab">
-                  <div class="flex-cols">
-                    <h4>
-                      <a
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/Christof-K/webgpu-game-of-life"
-                        >WebGPU - game of life simulation
-                      </a>
-                    </h4>
-                  </div>
-                  <div>
-                    <span class="pill">WGSL</span>
-                    <span class="pill">WebGPU API</span>
-                    <span class="pill">Typescript</span>
-                    <div>
-                      <small>
-                        Modified version of google codelabs (Conway's Game of
-                        Life simulation) that runs entirely on GPU using the
-                        WebGPU.
-                      </small>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="position-tab">
-                  <div class="flex-cols">
-                    <h4>
-                      <a
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/Christof-K/twitch_clips2yt_shorts_automation"
-                      >
-                        Twitch clips -> shorts "smart" conversion script
-                      </a>
-                    </h4>
-                  </div>
-                  <div>
-                    <span class="pill">Python</span>
-                    <div>
-                      <small
-                        >Downloading twitch.tv clips based on config (views
-                        count treshhold, selected channels, selected categories)
-                        Converting 16:9 to 9:16 (vertical) video - shorts format
-                        (eg. tiktok) Detecting streamer camera / face
-                        recognition, scaling up and puting above full screen
-                        clip. Bruning custom logo across the video legth.
-                        Uploaders - tiktok, yt</small
-                      >
-                    </div>
-                  </div>
-                </div>
-
-                <div class="position-tab">
-                  <div class="flex-cols">
-                    <h4>
-                      <a
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/Christof-K/drvcheck"
-                        >Drvcheck - drive statistic tool</a
-                      >
-                    </h4>
-                  </div>
-                  <div>
-                    <span class="pill">Go</span>
-                    <div>
-                      <small
-                        >Drvcheck is golang written wrapper around unix df
-                        command which store drives statistics.</small
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

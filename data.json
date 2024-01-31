@@ -1,0 +1,111 @@
+{
+  "projects": [
+    {
+      "title": "TankUP PWA",
+      "url": "https://tankup.web.app/",
+      "techStack": [
+        "Typescript",
+        "Pre-react",
+        "Firebase",
+        "MongoDB",
+        "Node.js",
+        "Deno"
+      ],
+      "desc": "Proof of concept filterable, sortable listing of Queensland fuel price index.\nFind lowest price/closest or combined option to tank up, add your private by brand discounts and more.\nLocation based app - works only in Queensland, Australia."
+    },
+    {
+      "title": "This portfolio/resume site",
+      "url": "https://github.com/Christof-K/christof-k.github.io",
+      "techStack": [
+        "JavaScript",
+        "Three.js"
+      ],
+      "desc": "Written in plain JS, taking advatnage of native browser web components."
+    },
+    {
+      "title": "WebGPU - game of life simulation",
+      "url": "https://github.com/Christof-K/webgpu-game-of-life",
+      "techStack": [
+        "WGSL",
+        "WebGPU API",
+        "Typescript"
+      ],
+      "desc": "Modified version of google codelabs (Conway's Game of Life simulation) that runs entirely on GPU using the WebGPU."
+    },
+    {
+      "title": "Twitch clips to vertical shorts \"smart\" conversion",
+      "url": "https://github.com/Christof-K/twitch-clips-to-vertical-shorts",
+      "techStack": [
+        "Python",
+        "MongoDB",
+        "ffmpeg"
+      ],
+      "desc": "Downloading twitch.tv clips based on config (views count treshhold, selected channels, selected categories) Converting 16: 9 to 9: 16 (vertical) video - shorts format (eg. tiktok) Detecting streamer camera / face recognition, scaling up and puting above full screen clip. Bruning custom logo across the video legth."
+    },
+    {
+      "title": "Drvcheck - drive statistic tool",
+      "url": "https://github.com/Christof-K/drvcheck",
+      "techStack": [
+        "Go"
+      ],
+      "desc": "Drvcheck is golang written wrapper around unix \"df\" command which store drives statistics."
+    }
+  ],
+  "positions": [
+    {
+      "title": "Full-Stack Developer - Companion",
+      "subtitle": "(SFA system)",
+      "datePeriod": "2021 - 2023",
+      "techStack": [
+        "Typescript",
+        "React",
+        "PHP 7-8.x",
+        "Symfony 5"
+      ],
+      "descList": [
+        "Participated in the full development life cycle, including requirements gathering, planning, testing, and deployment",
+        "Mentored junior developer and contributed to team knowledge sharing and code reviews",
+        "Utilized type checking and strong typing provided by TypeScript to improve code quality and prevent runtime errors"
+      ]
+    },
+    {
+      "title": "PHP Developer - AXL Dynamics",
+      "subtitle": "(Multiple projects)",
+      "datePeriod": "2020 - 2021",
+      "techStack": [
+        "PHP 7.x",
+        "PostgreSQL",
+        "Bootstrap 4",
+        "Laravel",
+        "Vue.js"
+      ],
+      "descList": [
+        "Participated in the full development life cycle, including requirements gathering, planning, testing, and deployment",
+        "Mentored junior developer and contributed to team knowledge sharing and code reviews",
+        "Utilized type checking and strong typing provided by TypeScript to improve code quality and prevent runtime errors"
+      ]
+    },
+    {
+      "title": "Full-Stack Developer - Beauty Company",
+      "subtitle": "(Custom E-Commerce platform)",
+      "datePeriod": "2014 - 2020",
+      "techStack": [
+        "PHP 5-7.x",
+        "CakePHP",
+        "jQuery",
+        "MySQL",
+        "Bootstrap 3"
+      ],
+      "descList": [
+        "Worked with RESTful APIs and integrated third-party services",
+        "Created and maintained materialized views to pre-aggregate data and improve query performance",
+        "Implemented and maintained MySQL table indexes to improve query performance and speed up data retrieval",
+        "Implemented features such as authentication, authorization, data validation, and CRUD operations",
+        "Provided technical support and troubleshooting for production environments",
+        "Troubleshooted and debugged code to fix issues and improve application performance",
+        "Used techniques such as lazy loading to reduce the number of requests made to the server and improve page performance",
+        "Utilized Redis caching with PHP to reduce server load and improve response times"
+      ]
+    }
+  ]
+}
