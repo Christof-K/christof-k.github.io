@@ -80,7 +80,6 @@ fetch("/data.json")
   .then((res) => res.json())
   .then((data) => {
     const jobPositions = bodyContent.querySelector(".tab.job-positions");
-    console.log('---', new JobPosition())
     for (const item of data.positions) {
       const jp = new JobPosition();
       jobPositions.append(jp.render(item));
@@ -205,7 +204,6 @@ function mainLoop(particle) {
 }
 
 (function animate() {
-  console.log('---animeeeee');
   camera.rotation.y = THREE.MathUtils.lerp(
     camera.rotation.y,
     mouseVec.x / 600,

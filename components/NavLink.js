@@ -1,3 +1,8 @@
+
+/**
+ * @typedef {import('../state.js').State} State
+ */
+
 class NavLink extends HTMLElement {
   constructor() {
     super();
@@ -8,6 +13,10 @@ class NavLink extends HTMLElement {
     `;
   }
 
+  /**
+   *
+   * @param {string} newTabId
+   */
   onTabChange(newTabId) {
     const _a = this.querySelector("a.nav-link");
     if (this.tabId == newTabId) {
@@ -17,6 +26,13 @@ class NavLink extends HTMLElement {
     }
   }
 
+  /**
+   *
+   * @param {string} tabId
+   * @param {string} name
+   * @param {string} url
+   * @param {State} state
+   */
   render(tabId, name, url, state) {
     this.tabId = tabId;
     const _a = this.querySelector("a.nav-link");
@@ -24,8 +40,10 @@ class NavLink extends HTMLElement {
     _a.setAttribute("href", url)
     _a.innerHTML = name;
 
-    state.subscribe((newTabId) => {
-      this.onTabChange(newTabId);
+    state.subscribe((e) => {
+      if(e.tab !== undefined) {
+        this.onTabChange(e.tab);
+      }
     });
   }
 }

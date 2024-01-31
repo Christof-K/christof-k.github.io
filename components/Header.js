@@ -31,9 +31,6 @@ class Header extends HTMLElement {
       }
     }
   }
-  connectedCallback() {
-    console.log("name header component connected");
-  }
 }
 
 customElements.define("name-header", Header);
