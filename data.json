@@ -20,7 +20,7 @@
         "JavaScript",
         "Three.js"
       ],
-      "desc": ""
+      "desc": "Written in plain JS, taking advatnage of native browser web components."
     },
     {
       "title": "WebGPU - game of life simulation",
