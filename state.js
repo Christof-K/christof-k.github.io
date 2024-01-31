@@ -21,6 +21,8 @@ class StateEvent {
  * @property {(callback: (event: StateEvent) => void) => void} subscribe - Subscribe to state change events.
  */
 export default class State {
+  tab = undefined;
+
   constructor() {
     this.subscribers = [];
   }

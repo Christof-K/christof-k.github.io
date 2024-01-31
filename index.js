@@ -40,7 +40,6 @@ const mouse = {
 };
 
 const state = new State();
-state.activeTab = tabs.home.id;
 
 const renderElement = document.getElementById("wrapper");
 if (!renderElement) throw new Error("renderElement#canvas-container not found");
@@ -60,7 +59,7 @@ cursorCanvas.height = HEIGHT;
 
 const hashChange = () => {
   const hash = window.location.hash.substring(1);
-  state.activeTab = hash;
+  state.activeTab = hash === "" ? tabs.home.id : hash;
 
 
   const icon_container = document.getElementById("icon-container");
