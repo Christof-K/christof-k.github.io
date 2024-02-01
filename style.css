@@ -76,7 +76,6 @@ div {
   box-shadow: rgba(25, 133, 161, 0.4) 5px 5px, rgba(25, 133, 161, 0.3) 10px 10px,
     rgba(25, 133, 161, 0.2) 15px 15px, rgba(25, 133, 161, 0.1) 20px 20px,
     rgba(25, 133, 161, 0.05) 25px 25px;
-  filter: blur(10px);
 }
 
 #wrapper.blur-out {
@@ -161,11 +160,12 @@ div {
 
 canvas:not(#cursor) {
   position: absolute;
-  filter: blur(1px);
+  filter: blur(2px);
   -webkit-user-select: none;
   z-index: -1;
   top: 0;
   left: 0;
+  opacity: .9;
 }
 
 .tab.home {
@@ -207,7 +207,6 @@ canvas:not(#cursor) {
 #nav-links {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
 }
 
 #body-content {

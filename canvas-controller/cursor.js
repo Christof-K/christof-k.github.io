@@ -1,4 +1,5 @@
-import * as THREE from 'three';
+import {lerp} from "./helper.js"
+
 const wrapperDOM = document.getElementById("wrapper");
 export const cursorComputeAndDraw = (mouse, ctx, cursorCanvas) => {
     let [interpolationSize, interpolationRadious, interpolationPos] = [1, 1, 1];
@@ -19,16 +20,16 @@ export const cursorComputeAndDraw = (mouse, ctx, cursorCanvas) => {
     }
     const [X, Y] = [0, 1];
     if (mouse.targetXY !== null) {
-        mouse.x = (THREE.MathUtils.lerp(mouse.x, mouse.targetXY[X], interpolationPos));
-        mouse.y = (THREE.MathUtils.lerp(mouse.y, mouse.targetXY[Y], interpolationPos));
+        mouse.x = (lerp(mouse.x, mouse.targetXY[X], interpolationPos));
+        mouse.y = (lerp(mouse.y, mouse.targetXY[Y], interpolationPos));
     }
     if (mouse.targetRadius !== null) {
-        mouse.radius = (THREE.MathUtils.lerp(mouse.radius, mouse.targetRadius, interpolationRadious));
+        mouse.radius = (lerp(mouse.radius, mouse.targetRadius, interpolationRadious));
     }
     if (mouse.targetSizeXY !== null) {
         mouse.sizeXY = [
-            (THREE.MathUtils.lerp(mouse.sizeXY[X], mouse.targetSizeXY[X], interpolationSize)),
-            (THREE.MathUtils.lerp(mouse.sizeXY[Y], mouse.targetSizeXY[Y], interpolationSize))
+            (lerp(mouse.sizeXY[X], mouse.targetSizeXY[X], interpolationSize)),
+            (lerp(mouse.sizeXY[Y], mouse.targetSizeXY[Y], interpolationSize))
         ];
     }
     cursorDraw(mouse, ctx, cursorCanvas);
