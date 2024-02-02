@@ -77,8 +77,8 @@ class Particle {
     }
 
     if (this.isSpecial() || this.isForceMoving())
-      return `rgba(${red.join(",")}, 0.1)`;
-    return `rgba(${blue[0]}, ${blue[1]}, ${blue[2]}, 0.1)`;
+      return `rgba(${red.join(",")}, 0.4)`;
+    return `rgba(${blue[0]}, ${blue[1]}, ${blue[2]}, 0.2)`;
   }
 
   poke() {
@@ -104,30 +104,19 @@ class Particle {
   }
 
   checkDangerZone() {
+    if (this.mouse.hovering) return;
+
     // check danger zone
     const dx = this.mouse.x - this.x;
     const dy = this.mouse.y - this.y;
     const angle = Math.atan2(dy, dx);
 
-    if (this.mouse.hovering === null) {
-      // circle pointer
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const radious = this.mouse.sizeXY[0] * 4 * Math.random();
-      if (distance < radious) {
-        this.x_force = this.x - radious * Math.cos(angle);
-        this.y_force = this.y - radious * Math.sin(angle);
-      }
-    } else {
-      // hovered pointer (rect over hoverable element)
-      // const distX = this.mouse.sizeXY[0] / 1.5;
-      // const distY = this.mouse.sizeXY[1] / 1.5;
-      // if (
-      //   Math.abs(dx) < distX &&
-      //   Math.abs(dy) < distY
-      // ) {
-      //   this.x_force = this.x - distX * Math.cos(angle);
-      //   this.y_force = this.y - distY * Math.sin(angle);
-      // }
+    // circle pointer
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const radius = this.mouse.radius * 4 * Math.random();
+    if (distance < radius) {
+      this.x_force = this.x - radius * Math.cos(angle);
+      this.y_force = this.y - radius * Math.sin(angle);
     }
   }
 
@@ -164,7 +153,7 @@ class Particle {
     this.ctx.lineWidth = 2;
     this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
     this.ctx.fill();
-    // this.ctx.filter = "blur(2px)"
+    // this.ctx.filter = "blur(2px)" // terrible performance
   }
 }
 
@@ -188,13 +177,11 @@ class ParticleBg {
   }
 
   pixelScan = () => {
+    const width = this.canvas.width;
+    const height = this.canvas.height;
+
     const vpix = 3;
-    const pixels = this.ctx.getImageData(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.width
-    ).data;
+    const pixels = this.ctx.getImageData(0, 0, width, height).data;
     for (let y = 0; y < this.canvas.height; y += vpix) {
       for (let x = 0; x < this.canvas.width; x += vpix) {
         const index = (y * this.canvas.width + x) * 4;
@@ -202,9 +189,6 @@ class ParticleBg {
         if (alpha > 0) {
           this.particles.push(
             new Particle(x, y, this.canvas, this.ctx, this.mouse)
-          );
-          this.particles.push(
-            new Particle(x + 1, y + 1, this.canvas, this.ctx, this.mouse)
           );
         }
       }

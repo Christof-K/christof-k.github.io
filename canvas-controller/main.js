@@ -1,3 +1,5 @@
+import Mouse from "./mouse.js";
+
 const wrapperDOM = document.getElementById("wrapper");
 if (!wrapperDOM) {
   throw new Error("renderElement#canvas-container not found");
@@ -8,6 +10,7 @@ if (!bgCanvas) throw new Error("#bg canvas not found");
 
 const bgCtx = bgCanvas.getContext("bitmaprenderer");
 if (!bgCtx) throw new Error("bg canvas context is null");
+const cursor = document.getElementById("cursor");
 
 bgCanvas.width = wrapperDOM.clientWidth;
 bgCanvas.height = wrapperDOM.clientHeight;
@@ -23,67 +26,57 @@ const resizeCanvas = () => {
   });
 };
 
-const mouse = {
-  x: -100,
-  y: -100,
-  radius: 50,
-  sizeXY: [10, 10],
-  hovering: null,
-  isDown: false,
-  targetRadius: null,
-  targetXY: null,
-  targetSizeXY: null,
-  offsetX: wrapperDOM?.offsetLeft ?? 0,
-  offsetY: wrapperDOM?.offsetTop ?? 0,
-};
+let workerMouseTM = null;
+const mouse = new Mouse(
+  wrapperDOM?.offsetLeft ?? 0,
+  wrapperDOM?.offsetTop ?? 0,
+  cursor,
+  () => {
+    if (workerMouseTM) clearTimeout(workerMouseTM);
+    workerMouseTM = setTimeout(() => {
+      worker.postMessage({
+        type: "mouseUpdate",
+        mouse: mouse.arrOffsetVal,
+      });
+    }, 5);
+  }
+);
 
 const worker = new Worker("/canvas-controller/worker.js", { type: "module" });
 worker.postMessage({
   type: "init",
   width: bgCanvas.width,
   height: bgCanvas.height,
-  mouse: mouse,
+  mouse: mouse.arrOffsetVal,
 });
 
+// ~~~~~~~~~ EVENTS ~~~~~~~~~
 worker.addEventListener("message", function (e) {
   if (e.data.msg === "render") {
     bgCtx.transferFromImageBitmap(e.data.bitmap);
   }
 });
 
-// ~~~~~~~~~ EVENTS ~~~~~~~~~
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-const mouseXYUpdate = (x, y) => {
-  mouse.x = x - mouse.offsetX;
-  mouse.y = y - mouse.offsetY;
-  return mouse;
-};
-
 window.addEventListener("mousemove", (event) => {
   if (mouse.hovering === null) {
-    worker.postMessage({
-      type: "mouseUpdate",
-      mouse: mouseXYUpdate(event.clientX, event.clientY),
-    });
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
   }
 });
 
 document.addEventListener("mousedown", (event) => {
-  if (!mouse.hovering) {
-    mouseXYUpdate(event.clientX, event.clientY);
-  }
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
   mouse.isDown = true;
-  worker.postMessage({ type: "mouseUpdate", mouse: mouse });
 });
 
 document.addEventListener("mouseup", (event) => {
-  if (!mouse.hovering) {
-    mouseXYUpdate(event.clientX, event.clientY);
-  }
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
   mouse.isDown = false;
-  worker.postMessage({ type: "mouseUpdate", mouse: mouse });
 });
 
 document.addEventListener("mouseover", (event) => {
@@ -93,9 +86,4 @@ document.addEventListener("mouseover", (event) => {
   } else {
     mouse.hovering = null;
   }
-
-  worker.postMessage({
-    type: "mouseUpdate",
-    mouse: mouse,
-  });
 });

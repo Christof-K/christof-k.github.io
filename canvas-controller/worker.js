@@ -11,6 +11,7 @@ class Controller {
   }
 
   updateMouse(mouse) {
+    // keep reference
     for (const [key, value] of Object.entries(mouse)) {
       this.mouse[key] = value;
     }
@@ -32,26 +33,39 @@ let canvas;
 self.onmessage = (e) => {
   switch (e.data.type) {
     case "init":
-      console.log("---", e.data.width, e.data.height);
       canvas = new OffscreenCanvas(e.data.width, e.data.height);
       controllerInstance = new Controller(canvas, e.data.mouse);
-      animate();
+      draw();
       break;
     case "resizeCanvas":
-      console.log("resizeCanvas", e.data.width, e.data.height);
       canvas.width = e.data.width;
       canvas.height = e.data.height;
       break;
     case "mouseUpdate":
       controllerInstance.updateMouse(e.data.mouse);
+
       break;
   }
 };
 
-const animate = () => {
-  self.postMessage({
-    msg: "render",
-    bitmap: controllerInstance.animationFrame(),
-  });
-  self.requestAnimationFrame(animate);
+const fps = 30;
+let interval = 1000 / fps;
+let then;
+
+const draw = (timestamp) => {
+  self.requestAnimationFrame(draw);
+
+  if (then === undefined) {
+    then = timestamp;
+  }
+
+  const delta = timestamp - then;
+  if (delta > interval) {
+    self.postMessage({
+      msg: "render",
+      bitmap: controllerInstance.animationFrame(),
+    });
+
+    then = timestamp - (delta % interval);
+  }
 };

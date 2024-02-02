@@ -1,26 +1,33 @@
 import { lerp } from "./helper.js";
 
 class Cursor {
+  #x = 0;
+  #y = 0;
+
+  radius = 50;
+  sizeXY = [10, 10];
+
   constructor(canvas, mouse) {
     this.mouse = mouse;
     this.ctx = canvas.getContext("2d");
+
+    this.radius = null;
+    this.sizeXY = [10, 10];
+
+    this.targetRadius = null;
+    this.targetXY = null;
+    this.targetSizeXY = null;
   }
 
   cursorDraw() {
-    const x = this.mouse.x;
-    const y = this.mouse.y;
+    const x = this.#x;
+    const y = this.#y;
 
     if (x < 0 || y < 0) return;
     const [X, Y] = [0, 1];
     this.ctx.beginPath();
     this.ctx.fillStyle = "red";
-    this.ctx.roundRect(
-      x,
-      y,
-      this.mouse.sizeXY[X],
-      this.mouse.sizeXY[Y],
-      this.mouse.radius
-    );
+    this.ctx.roundRect(x, y, this.sizeXY[X], this.sizeXY[Y], this.radius);
     if (this.mouse.isDown) this.ctx.fill();
     this.ctx.strokeStyle = "red";
     this.ctx.lineWidth = 2;
@@ -29,60 +36,43 @@ class Cursor {
 
   animationFrameLoop() {
     let [interpolationSize, interpolationRadious, interpolationPos] = [1, 1, 1];
+
     if (this.mouse.hovering) {
       const targetBoundingRect = this.mouse.hovering;
       interpolationSize = interpolationPos = 0.5;
       interpolationRadious = 0.2;
-      this.mouse.targetRadius = 0;
+      this.targetRadius = 0;
 
-      this.mouse.targetXY = [
-        targetBoundingRect.x - this.mouse.offsetX - 8,
-        targetBoundingRect.y - this.mouse.offsetY - 4,
+      this.targetXY = [
+        targetBoundingRect.x - this.mouse.wrapperOffsetX - 8,
+        targetBoundingRect.y - this.mouse.wrapperOffsetY - 4,
       ];
-      this.mouse.targetSizeXY = [
+      this.targetSizeXY = [
         targetBoundingRect.width + 16,
         targetBoundingRect.height + 8,
       ];
     } else {
-      // interpolationSize = interpolationRadious = interpolationPos = 0.1;
-      this.mouse.targetRadius = 50;
-      this.mouse.targetSizeXY = [10, 10];
-      this.mouse.targetXY = null;
+      this.targetRadius = 50;
+      this.targetSizeXY = [10, 10];
+      this.targetXY = null;
+      this.#x = this.mouse.x;
+      this.#y = this.mouse.y;
     }
     const [X, Y] = [0, 1];
-    if (this.mouse.targetXY !== null) {
-      this.mouse.x = lerp(
-        this.mouse.x,
-        this.mouse.targetXY[X],
-        interpolationPos
-      );
-      this.mouse.y = lerp(
-        this.mouse.y,
-        this.mouse.targetXY[Y],
-        interpolationPos
-      );
+    if (this.targetXY !== null) {
+      this.#x = lerp(this.#x, this.targetXY[X], interpolationPos);
+      this.#y = lerp(this.#y, this.targetXY[Y], interpolationPos);
     }
-    if (this.mouse.targetRadius !== null) {
-      this.mouse.radius = lerp(
-        this.mouse.radius,
-        this.mouse.targetRadius,
-        interpolationRadious
-      );
+    if (this.targetRadius !== null) {
+      this.radius = lerp(this.radius, this.targetRadius, interpolationRadious);
     }
-    if (this.mouse.targetSizeXY !== null) {
-      this.mouse.sizeXY = [
-        lerp(
-          this.mouse.sizeXY[X],
-          this.mouse.targetSizeXY[X],
-          interpolationSize
-        ),
-        lerp(
-          this.mouse.sizeXY[Y],
-          this.mouse.targetSizeXY[Y],
-          interpolationSize
-        ),
+    if (this.targetSizeXY !== null) {
+      this.sizeXY = [
+        lerp(this.sizeXY[X], this.targetSizeXY[X], interpolationSize),
+        lerp(this.sizeXY[Y], this.targetSizeXY[Y], interpolationSize),
       ];
     }
+
     this.cursorDraw();
   }
 }
