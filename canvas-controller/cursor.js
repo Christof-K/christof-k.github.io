@@ -1,7 +1,7 @@
 import {lerp} from "./helper.js"
 
-const wrapperDOM = document.getElementById("wrapper");
 export const cursorComputeAndDraw = (mouse, ctx, cursorCanvas) => {
+
     let [interpolationSize, interpolationRadious, interpolationPos] = [1, 1, 1];
     if (mouse.hovering) {
         const target = mouse.hovering;
@@ -9,7 +9,9 @@ export const cursorComputeAndDraw = (mouse, ctx, cursorCanvas) => {
         interpolationRadious = 0.1;
         mouse.targetRadius = 0;
         const targetBoundingRect = target.getBoundingClientRect();
-        mouse.targetXY = [targetBoundingRect.x - 8, targetBoundingRect.y - 4];
+
+
+        mouse.targetXY = [targetBoundingRect.x - mouse.offsetX - 8, targetBoundingRect.y - mouse.offsetY - 4];
         mouse.targetSizeXY = [targetBoundingRect.width + 16, targetBoundingRect.height + 8];
     }
     else {
@@ -35,9 +37,10 @@ export const cursorComputeAndDraw = (mouse, ctx, cursorCanvas) => {
     cursorDraw(mouse, ctx, cursorCanvas);
 };
 const cursorDraw = (mouse, ctx, cursorCanvas) => {
-    var _a, _b;
-    const x = mouse.x - ((_a = wrapperDOM === null || wrapperDOM === void 0 ? void 0 : wrapperDOM.offsetLeft) !== null && _a !== void 0 ? _a : 0);
-    const y = mouse.y - ((_b = wrapperDOM === null || wrapperDOM === void 0 ? void 0 : wrapperDOM.offsetTop) !== null && _b !== void 0 ? _b : 0);
+
+    const x = mouse.x;
+    const y = mouse.y;
+
     ctx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
     if (x < 0 || y < 0)
         return;

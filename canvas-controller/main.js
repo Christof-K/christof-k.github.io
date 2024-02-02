@@ -2,8 +2,8 @@ import {cursorComputeAndDraw} from "./cursor.js"
 import ParticleBg from "./particles.js";
 
 
-const wrapperElement = document.getElementById("wrapper");
-if (!wrapperElement) {
+const wrapperDOM = document.getElementById("wrapper");
+if (!wrapperDOM) {
   throw new Error("renderElement#canvas-container not found");
 }
 
@@ -19,8 +19,8 @@ if (!bgCtx) throw new Error("bg canvas context is null");
 
 
 const resizeCanvas = () => {
-  const WIDTH = wrapperElement.clientWidth;
-  const HEIGHT = wrapperElement.clientHeight;
+  const WIDTH = wrapperDOM.clientWidth;
+  const HEIGHT = wrapperDOM.clientHeight;
 
   cursorCanvas.width = WIDTH;
   cursorCanvas.height = HEIGHT;
@@ -40,13 +40,15 @@ const mouse = {
   targetRadius: null,
   targetXY: null,
   targetSizeXY: null,
+  offsetX: wrapperDOM?.offsetLeft ?? 0,
+  offsetY: wrapperDOM?.offsetTop ?? 0
 };
 
-const particleBg = new ParticleBg(bgCtx, bgCanvas);
+const particle = new ParticleBg(bgCtx, bgCanvas, mouse);
 
 (function animate() {
   cursorComputeAndDraw(mouse, cursorCanvasContext, cursorCanvas);
-  particleBg.animationFrameLoop()
+  particle.animationFrameLoop();
 
   window.requestAnimationFrame(animate);
 })();
@@ -56,18 +58,20 @@ const particleBg = new ParticleBg(bgCtx, bgCanvas);
 // ~~~~~~~~~ EVENTS ~~~~~~~~~
 window.addEventListener("resize", resizeCanvas);
 
+const mouseXYUpdate = (x,y) => {
+  mouse.x = x - mouse.offsetX;
+  mouse.y = y - mouse.offsetY;
+}
 
 window.addEventListener("mousemove", (event) => {
   if (mouse.hovering === null) {
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
+    mouseXYUpdate(event.clientX, event.clientY);
   }
 });
 
 document.addEventListener("mousedown", (event) => {
   if (!mouse.hovering) {
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
+    mouseXYUpdate(event.clientX, event.clientY);
   }
   mouse.isDown = true;
   // particles.forEach(mainLoop)
@@ -75,8 +79,7 @@ document.addEventListener("mousedown", (event) => {
 
 document.addEventListener("mouseup", (event) => {
   if (!mouse.hovering) {
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
+    mouseXYUpdate(event.clientX, event.clientY);
   }
   mouse.isDown = false;
   // particles.forEach(mainLoop) // todo:
