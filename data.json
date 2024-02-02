@@ -17,8 +17,7 @@
       "title": "This portfolio/resume site",
       "url": "https://github.com/Christof-K/christof-k.github.io",
       "techStack": [
-        "JavaScript",
-        "Three.js"
+        "JavaScript"
       ],
       "desc": "Written in Vanilla JavaScript (no frameworks, no libraries), taking advatnage of web components, web workers and Canvas API"
     },
