@@ -24,6 +24,8 @@ class Cursor {
     const y = this.#y;
 
     if (x < 0 || y < 0) return;
+    if (!this.mouse.hovering) return;
+
     const [X, Y] = [0, 1];
     this.ctx.beginPath();
     this.ctx.fillStyle = "red";

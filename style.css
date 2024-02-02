@@ -407,3 +407,21 @@ h:hover {
     font-size: 0.7em;
   }
 }
+
+
+
+
+#base-cursor {
+  will-change: transform;
+  display: none;
+  cursor: none;
+  position: absolute;
+  z-index: -1;
+  width: 8px;
+  height: 8px;
+  top:0;
+  left:0;
+  border: 2px solid #ff0000;
+  border-radius: 50px;
+}
+

@@ -17,6 +17,19 @@ class Mouse {
   }
 
   #updateCursor() {
+
+    if (!this.#hovering) {
+      this.cursorDOM.style.display = "inherit";
+      this.cursorDOM.style.transform = `translate(${
+        this.#x - this.#wrapperOffsetX
+      }px, ${this.#y - this.#wrapperOffsetY}px)`;
+      if (this.#isDown) {
+        this.cursorDOM.style.background = "#ff0000";
+      } else this.cursorDOM.style.background = "inherit";
+    } else {
+      this.cursorDOM.style.display = "none";
+    }
+
     this.updateCallback();
   }
 

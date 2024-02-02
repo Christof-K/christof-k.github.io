@@ -10,7 +10,7 @@ if (!bgCanvas) throw new Error("#bg canvas not found");
 
 const bgCtx = bgCanvas.getContext("bitmaprenderer");
 if (!bgCtx) throw new Error("bg canvas context is null");
-const cursor = document.getElementById("cursor");
+const cursor = document.getElementById("base-cursor");
 
 bgCanvas.width = wrapperDOM.clientWidth;
 bgCanvas.height = wrapperDOM.clientHeight;
