@@ -141,13 +141,10 @@ div {
   width: 2em;
 }
 
-
 .subheader {
   font-family: Source Code Pro;
   font-size: 2em;
 }
-
-
 
 #bg {
   position: absolute;
@@ -263,10 +260,11 @@ h:hover {
   background-image: url("/assets/svg/iconmonstr-github-1.svg");
 }
 
-
 .tech-stack {
   display: flex;
-  column-gap: 0.5rem;;
+  column-gap: 0.5rem;
+  row-gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .pill {
@@ -345,8 +343,6 @@ h:hover {
     content: "";
   }
 }
-
-
 
 @media screen and (max-width: 1200px) {
   #body-wrapper {
