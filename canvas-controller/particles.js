@@ -3,6 +3,7 @@ import { lerp, getRandomInt, clampValue } from "./helper.js";
 
 const MARGIN = 100;
 const blue = [25, 133, 161];
+const red = [255, 0, 0];
 
 class Particle {
   x = 0;
@@ -63,7 +64,7 @@ class Particle {
       this.x_force = undefined;
       this.y_force = undefined;
     }
-    return (this.x_force != undefined || this.y_force != undefined)
+    return this.x_force != undefined || this.y_force != undefined;
   }
 
   isResising() {
@@ -74,12 +75,10 @@ class Particle {
     if (getRandomInt(0, 20000) === 0 && !this.floatMode) {
       this.specialUntil = Date.now() + 3000;
     }
-    const red = [255, 0, 0];
-    if (this.isSpecial() || this.isForceMoving()) return `rgb(${red.join(",")})`;
 
-    // const black = [0, 0, 0];
-    // const hm = this.r; // / CamZ;
-    return `rgb(${blue[0]}, ${blue[1]}, ${blue[2]})`;
+    if (this.isSpecial() || this.isForceMoving())
+      return `rgba(${red.join(",")}, 0.1)`;
+    return `rgba(${blue[0]}, ${blue[1]}, ${blue[2]}, 0.1)`;
   }
 
   poke() {
@@ -144,9 +143,7 @@ class Particle {
     if (this.isForceMoving()) {
       this.x = lerp(this.x, this.x_force, this.force_acc);
       this.y = lerp(this.y, this.y_force, this.force_acc);
-
     } else {
-
       if (!this.isMoving()) {
         this.poke();
       }
@@ -167,6 +164,7 @@ class Particle {
     this.ctx.lineWidth = 2;
     this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
     this.ctx.fill();
+    // this.ctx.filter = "blur(2px)"
   }
 }
 
@@ -175,8 +173,8 @@ class ParticleBg {
   textVisible = true;
   particles = [];
 
-  constructor(ctx, canvas, mouse) {
-    this.ctx = ctx;
+  constructor(canvas, mouse) {
+    this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.mouse = mouse;
   }
@@ -205,14 +203,15 @@ class ParticleBg {
           this.particles.push(
             new Particle(x, y, this.canvas, this.ctx, this.mouse)
           );
+          this.particles.push(
+            new Particle(x + 1, y + 1, this.canvas, this.ctx, this.mouse)
+          );
         }
       }
     }
   };
 
   animationFrameLoop() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     if (this.textVisible) {
       const hw_path_org = HelloWorldPath();
       const hw_path = new Path2D();
@@ -230,7 +229,7 @@ class ParticleBg {
       if (!this.init) {
         this.ctx.fill(hw_path);
       } else if (this.canvas.width < 1000) {
-        this.ctx.stroke(hw_path);
+        // this.ctx.stroke(hw_path);
       }
     }
 

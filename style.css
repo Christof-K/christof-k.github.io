@@ -147,28 +147,13 @@ div {
   font-size: 2em;
 }
 
-#cursor {
-  cursor: none;
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  bottom: 0;
-  user-select: none;
-  -webkit-user-select: none;
-}
 
-canvas {
-  will-change: transform;
-}
 
-canvas:not(#cursor) {
+#bg {
   position: absolute;
-  filter: blur(2px);
   -webkit-user-select: none;
   z-index: -1;
-  top: 0;
-  left: 0;
-  opacity: .9;
+  inset: 0;
 }
 
 .tab.home {
