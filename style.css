@@ -76,7 +76,6 @@ div {
   box-shadow: rgba(25, 133, 161, 0.4) 5px 5px, rgba(25, 133, 161, 0.3) 10px 10px,
     rgba(25, 133, 161, 0.2) 15px 15px, rgba(25, 133, 161, 0.1) 20px 20px,
     rgba(25, 133, 161, 0.05) 25px 25px;
-  filter: blur(10px);
 }
 
 #wrapper.blur-out {
@@ -93,8 +92,7 @@ div {
 }
 
 #nav {
-  font-size: 1.5em;
-  line-height: 3em !important;
+  font-size: 1.1em;
 }
 
 #wrapper::after {
@@ -149,23 +147,13 @@ div {
   font-size: 2em;
 }
 
-#cursor {
-  cursor: none;
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  bottom: 0;
-  user-select: none;
-  -webkit-user-select: none;
-}
 
-canvas:not(#cursor) {
+
+#bg {
   position: absolute;
-  filter: blur(1px);
   -webkit-user-select: none;
   z-index: -1;
-  top: 0;
-  left: 0;
+  inset: 0;
 }
 
 .tab.home {
@@ -175,6 +163,7 @@ canvas:not(#cursor) {
   text-align: right;
   width: 200px;
   line-height: 1.5em;
+  font-size: 0.8em;
 }
 
 .tab:not(.active) {
@@ -190,7 +179,7 @@ canvas:not(#cursor) {
 
 #header-wrapper {
   padding: var(--panel-pad);
-  line-height: 3em;
+  line-height: 2.2em;
 }
 
 #nav {
@@ -207,7 +196,6 @@ canvas:not(#cursor) {
 #nav-links {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
 }
 
 #body-content {
@@ -369,6 +357,7 @@ h:hover {
 
   #nav {
     gap: 5em;
+    font-size: 1.5em;
   }
 
   #nav-links {
@@ -378,7 +367,7 @@ h:hover {
   }
 
   #header-wrapper {
-    line-height: 3em;
+    line-height: 2em;
     padding-bottom: 1em;
     font-size: 0.8em;
   }
@@ -412,8 +401,9 @@ h:hover {
     gap: 1em;
   }
   #header-wrapper {
+    margin-top: 1rem;
     padding: var(--pad-xs);
-    line-height: 4em;
+    line-height: 2.5em;
     font-size: 0.59em;
   }
 
