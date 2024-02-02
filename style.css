@@ -157,6 +157,10 @@ div {
   -webkit-user-select: none;
 }
 
+canvas {
+  will-change: transform;
+}
+
 canvas:not(#cursor) {
   position: absolute;
   filter: blur(2px);
