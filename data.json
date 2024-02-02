@@ -19,7 +19,7 @@
       "techStack": [
         "JavaScript"
       ],
-      "desc": "Written in Vanilla JavaScript (no frameworks, no libraries), taking advatnage of web components, web workers and Canvas API"
+      "desc": "Written in Vanilla JavaScript (no frameworks, no libraries), taking advantage of web components, web workers and Canvas API"
     },
     {
       "title": "WebGPU - game of life simulation",
@@ -39,7 +39,7 @@
         "MongoDB",
         "ffmpeg"
       ],
-      "desc": "Downloading twitch.tv clips based on config (views count treshhold, selected channels, selected categories) Converting 16: 9 to 9: 16 (vertical) video - shorts format (eg. tiktok) Detecting streamer camera / face recognition, scaling up and puting above full screen clip. Bruning custom logo across the video legth."
+      "desc": "Downloading twitch.tv clips based on config (views count threshold, selected channels, selected categories) Converting 16: 9 to 9: 16 (vertical) video - shorts format (eg. tiktok) Detecting streamer camera / face recognition, scaling up and puting above full screen clip. Burning custom logo across the video length."
     },
     {
       "title": "Drvcheck - drive statistic tool",
@@ -101,7 +101,7 @@
         "Implemented and maintained MySQL table indexes to improve query performance and speed up data retrieval",
         "Implemented features such as authentication, authorization, data validation, and CRUD operations",
         "Provided technical support and troubleshooting for production environments",
-        "Troubleshooted and debugged code to fix issues and improve application performance",
+        "Troubleshot and debugged code to fix issues and improve application performance",
         "Used techniques such as lazy loading to reduce the number of requests made to the server and improve page performance",
         "Utilized Redis caching with PHP to reduce server load and improve response times"
       ]
