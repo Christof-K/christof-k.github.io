@@ -48,7 +48,7 @@ self.onmessage = (e) => {
   }
 };
 
-const fps = 30;
+const fps = 60;
 let interval = 1000 / fps;
 let then;
 
