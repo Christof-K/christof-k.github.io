@@ -52,7 +52,7 @@ class Particle {
   }
 
   isSpecial() {
-    return this.specialUntil > Date.now();
+    return this.specialUntil > Date.now() || this.isForceMoving();
   }
 
   isMoving() {
@@ -69,16 +69,6 @@ class Particle {
 
   isResising() {
     return Math.abs(this.r - this.dest_r) > 1;
-  }
-
-  getColor() {
-    if (getRandomInt(0, 20000) === 0 && !this.floatMode) {
-      this.specialUntil = Date.now() + 3000;
-    }
-
-    if (this.isSpecial() || this.isForceMoving())
-      return `rgba(${red.join(",")}, 0.4)`;
-    return `rgba(${blue[0]}, ${blue[1]}, ${blue[2]}, 0.2)`;
   }
 
   poke() {
@@ -121,6 +111,10 @@ class Particle {
   }
 
   frameMoveCompute() {
+    if (getRandomInt(0, 20000) === 0 && !this.floatMode) {
+      this.specialUntil = Date.now() + 3000;
+    }
+
     this.acc = lerp(this.acc, this.acc_dist, 0.01);
 
     if (!this.isResising()) {
@@ -145,15 +139,10 @@ class Particle {
     }
   }
 
-  frameDraw() {
+  frameAppend() {
     this.frameMoveCompute();
-
-    this.ctx.beginPath();
-    this.ctx.fillStyle = this.getColor();
-    this.ctx.lineWidth = 2;
+    this.ctx.moveTo(this.x, this.y);
     this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    this.ctx.fill();
-    // this.ctx.filter = "blur(2px)" // terrible performance
   }
 }
 
@@ -235,9 +224,23 @@ class ParticleBg {
       }, 3000);
     }
 
-    for (const p of this.particles) {
-      p.frameDraw();
+    // special particles render
+    this.ctx.beginPath();
+    this.ctx.fillStyle = `rgba(${red.join(",")}, 0.4)`;
+    this.ctx.lineWidth = 2;
+    for (const p of this.particles.filter((p) => p.isSpecial())) {
+      p.frameAppend();
     }
+    this.ctx.fill();
+
+    // regular particles render
+    this.ctx.beginPath();
+    this.ctx.fillStyle = `rgba(${blue.join(",")}, 0.2)`;
+    this.ctx.lineWidth = 2;
+    for (const p of this.particles.filter((p) => !p.isSpecial())) {
+      p.frameAppend();
+    }
+    this.ctx.fill();
   }
 }
 
