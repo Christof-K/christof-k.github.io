@@ -27,6 +27,11 @@ const _init = (resolve, reject) => {
       width: bgCanvas.width,
       height: bgCanvas.height,
     });
+
+    mouse.updateWrapperOffset(
+      wrapperDOM?.offsetLeft ?? 0,
+      wrapperDOM?.offsetTop ?? 0
+    );
   };
 
   let workerMouseTM = null;

@@ -16,6 +16,7 @@ class Mouse {
     this.updateCallback = updateCallback;
   }
 
+
   #updateCursor() {
 
     if (!this.#hovering) {
@@ -31,6 +32,11 @@ class Mouse {
     }
 
     this.updateCallback();
+  }
+
+  updateWrapperOffset(offsetX, offsetY) {
+    this.#wrapperOffsetX = offsetX
+    this.#wrapperOffsetY = offsetY
   }
 
   set x(val) {
