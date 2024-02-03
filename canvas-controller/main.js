@@ -1,4 +1,5 @@
 import Mouse from "./mouse.js";
+import WebGPU from "./webgpu.js";
 
 const wrapperDOM = document.getElementById("wrapper");
 if (!wrapperDOM) {
@@ -8,8 +9,8 @@ if (!wrapperDOM) {
 const bgCanvas = document.getElementById("bg");
 if (!bgCanvas) throw new Error("#bg canvas not found");
 
-const bgCtx = bgCanvas.getContext("bitmaprenderer");
-if (!bgCtx) throw new Error("bg canvas context is null");
+// const bgCtx = bgCanvas.getContext("bitmaprenderer");
+// if (!bgCtx) throw new Error("bg canvas context is null");
 const cursor = document.getElementById("base-cursor");
 
 bgCanvas.width = wrapperDOM.clientWidth;
@@ -19,43 +20,48 @@ const resizeCanvas = () => {
   bgCanvas.width = wrapperDOM.clientWidth;
   bgCanvas.height = wrapperDOM.clientHeight;
 
-  worker.postMessage({
-    type: "resizeCanvas",
-    width: bgCanvas.width,
-    height: bgCanvas.height,
-  });
+  // worker.postMessage({
+  //   type: "resizeCanvas",
+  //   width: bgCanvas.width,
+  //   height: bgCanvas.height,
+  // });
 };
 
-let workerMouseTM = null;
-const mouse = new Mouse(
-  wrapperDOM?.offsetLeft ?? 0,
-  wrapperDOM?.offsetTop ?? 0,
-  cursor,
-  () => {
-    if (workerMouseTM) clearTimeout(workerMouseTM);
-    workerMouseTM = setTimeout(() => {
-      worker.postMessage({
-        type: "mouseUpdate",
-        mouse: mouse.arrOffsetVal,
-      });
-    }, 5);
-  }
-);
-
-const worker = new Worker("/canvas-controller/worker.js", { type: "module" });
-worker.postMessage({
-  type: "init",
-  width: bgCanvas.width,
-  height: bgCanvas.height,
-  mouse: mouse.arrOffsetVal,
+const webGpu = new WebGPU(bgCanvas);
+webGpu.init().then(() => {
+  webGpu.frame();
 });
+
+// let workerMouseTM = null;
+// const mouse = new Mouse(
+//   wrapperDOM?.offsetLeft ?? 0,
+//   wrapperDOM?.offsetTop ?? 0,
+//   cursor,
+//   () => {
+//     if (workerMouseTM) clearTimeout(workerMouseTM);
+//     workerMouseTM = setTimeout(() => {
+//       worker.postMessage({
+//         type: "mouseUpdate",
+//         mouse: mouse.arrOffsetVal,
+//       });
+//     }, 5);
+//   }
+// );
+
+// const worker = new Worker("/canvas-controller/worker.js", { type: "module" });
+// worker.postMessage({
+//   type: "init",
+//   width: bgCanvas.width,
+//   height: bgCanvas.height,
+//   mouse: mouse.arrOffsetVal,
+// });
 
 // ~~~~~~~~~ EVENTS ~~~~~~~~~
-worker.addEventListener("message", function (e) {
-  if (e.data.msg === "render") {
-    bgCtx.transferFromImageBitmap(e.data.bitmap);
-  }
-});
+// worker.addEventListener("message", function (e) {
+//   if (e.data.msg === "render") {
+//     bgCtx.transferFromImageBitmap(e.data.bitmap);
+//   }
+// });
 
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();

@@ -19,7 +19,7 @@ class Particle {
   dest_y = 0;
   dest_r = 0;
 
-  min_r = 1;
+  min_r = 2;
   max_r = 3;
 
   specialUntil = 0;
@@ -32,7 +32,7 @@ class Particle {
     this.x = x;
     this.y = y;
 
-    this.r = 2;
+    this.r = this.max_r;
     this.floatMode = true;
     this.dest_r = this.r;
 
@@ -145,15 +145,13 @@ class Particle {
     }
   }
 
-  frameDraw() {
+  appendDraw() {
     this.frameMoveCompute();
 
-    this.ctx.beginPath();
-    this.ctx.fillStyle = this.getColor();
-    this.ctx.lineWidth = 2;
+    this.ctx.moveTo(this.x, this.y);
+    // this.ctx.fillStyle = this.getColor();
+    // this.ctx.lineWidth = 2;
     this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    this.ctx.fill();
-    // this.ctx.filter = "blur(2px)" // terrible performance
   }
 }
 
@@ -235,9 +233,14 @@ class ParticleBg {
       }, 3000);
     }
 
+    // todo: ---
+    this.ctx.beginPath();
+    this.ctx.fillStyle = "#000000";
+
     for (const p of this.particles) {
-      p.frameDraw();
+      p.appendDraw();
     }
+    this.ctx.fill();
   }
 }
 
