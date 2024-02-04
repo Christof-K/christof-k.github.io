@@ -1,4 +1,5 @@
 import State from "./state.js";
+import canvasInit from './canvas-controller/main.js';
 
 const bodyContent = document.getElementById("body-content");
 
@@ -87,17 +88,16 @@ tabHome.innerHTML = `
 `;
 
 window.addEventListener("load", () => {
-  const ls = document.getElementById("loading-screen");
-  if (ls) {
-    ls.remove();
-  }
-  const wrapper = document.getElementById("wrapper");
-  if (wrapper) {
-    wrapper.className = "blur-out";
-  }
+  canvasInit().then(() => {
+    const ls = document.getElementById("loading-screen");
+    if (ls) {
+      ls.remove();
+    }
+    const wrapper = document.getElementById("wrapper");
+    if (wrapper) {
+      wrapper.className = "blur-out";
+    }
+  });
 });
-
-
-
 
 window.addEventListener("hashchange", hashChange);

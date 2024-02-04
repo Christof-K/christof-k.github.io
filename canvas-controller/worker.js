@@ -36,6 +36,11 @@ self.onmessage = (e) => {
       canvas = new OffscreenCanvas(e.data.width, e.data.height);
       controllerInstance = new Controller(canvas, e.data.mouse);
       draw();
+      setTimeout(() => {
+        self.postMessage({
+          type: "init-handshake"
+        })
+      }, 200)
       break;
     case "resizeCanvas":
       canvas.width = e.data.width;
@@ -62,7 +67,7 @@ const draw = (timestamp) => {
   const delta = timestamp - then;
   if (delta > interval) {
     self.postMessage({
-      msg: "render",
+      type: "render",
       bitmap: controllerInstance.animationFrame(),
     });
 

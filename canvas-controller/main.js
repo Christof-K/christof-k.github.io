@@ -1,95 +1,106 @@
 import Mouse from "./mouse.js";
 import WebGPU from "./webgpu.js";
 
-const wrapperDOM = document.getElementById("wrapper");
-if (!wrapperDOM) {
-  throw new Error("renderElement#canvas-container not found");
-}
+const _init = (resolve, reject) => {
+  // todo: -
+  resolve();
 
-const bgCanvas = document.getElementById("bg");
-if (!bgCanvas) throw new Error("#bg canvas not found");
+  const wrapperDOM = document.getElementById("wrapper");
+  if (!wrapperDOM) {
+    throw new Error("renderElement#canvas-container not found");
+  }
 
-// const bgCtx = bgCanvas.getContext("bitmaprenderer");
-// if (!bgCtx) throw new Error("bg canvas context is null");
-const cursor = document.getElementById("base-cursor");
+  const bgCanvas = document.getElementById("bg");
+  if (!bgCanvas) throw new Error("#bg canvas not found");
 
-bgCanvas.width = wrapperDOM.clientWidth;
-bgCanvas.height = wrapperDOM.clientHeight;
+  // const bgCtx = bgCanvas.getContext("bitmaprenderer");
+  // if (!bgCtx) throw new Error("bg canvas context is null");
+  const cursor = document.getElementById("base-cursor");
 
-const resizeCanvas = () => {
   bgCanvas.width = wrapperDOM.clientWidth;
   bgCanvas.height = wrapperDOM.clientHeight;
 
+  const resizeCanvas = () => {
+    bgCanvas.width = wrapperDOM.clientWidth;
+    bgCanvas.height = wrapperDOM.clientHeight;
+
+    // worker.postMessage({
+    //   type: "resizeCanvas",
+    //   width: bgCanvas.width,
+    //   height: bgCanvas.height,
+    // });
+  };
+
+  const webGpu = new WebGPU(bgCanvas);
+  webGpu.init().then(() => {
+    webGpu.frame();
+  });
+
+  let workerMouseTM = null;
+  const mouse = new Mouse(
+    wrapperDOM?.offsetLeft ?? 0,
+    wrapperDOM?.offsetTop ?? 0,
+    cursor,
+    () => {
+      // if (workerMouseTM) clearTimeout(workerMouseTM);
+      // workerMouseTM = setTimeout(() => {
+      //   worker.postMessage({
+      //     type: "mouseUpdate",
+      //     mouse: mouse.arrOffsetVal,
+      //   });
+      // }, 5);
+    }
+  );
+
+  // const worker = new Worker("/canvas-controller/worker.js", { type: "module" });
   // worker.postMessage({
-  //   type: "resizeCanvas",
+  //   type: "init",
   //   width: bgCanvas.width,
   //   height: bgCanvas.height,
+  //   mouse: mouse.arrOffsetVal,
   // });
-};
 
-const webGpu = new WebGPU(bgCanvas);
-webGpu.init().then(() => {
-  webGpu.frame();
-});
+  // ~~~~~~~~~ EVENTS ~~~~~~~~~
+  // worker.addEventListener("message", function (e) {
+  //   if (e.data.msg === "render") {
+  //     bgCtx.transferFromImageBitmap(e.data.bitmap);
+  //   }
+  // });
 
-// let workerMouseTM = null;
-// const mouse = new Mouse(
-//   wrapperDOM?.offsetLeft ?? 0,
-//   wrapperDOM?.offsetTop ?? 0,
-//   cursor,
-//   () => {
-//     if (workerMouseTM) clearTimeout(workerMouseTM);
-//     workerMouseTM = setTimeout(() => {
-//       worker.postMessage({
-//         type: "mouseUpdate",
-//         mouse: mouse.arrOffsetVal,
-//       });
-//     }, 5);
-//   }
-// );
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
 
-// const worker = new Worker("/canvas-controller/worker.js", { type: "module" });
-// worker.postMessage({
-//   type: "init",
-//   width: bgCanvas.width,
-//   height: bgCanvas.height,
-//   mouse: mouse.arrOffsetVal,
-// });
+  window.addEventListener("mousemove", (event) => {
+    if (mouse.hovering === null) {
+      mouse.x = event.clientX;
+      mouse.y = event.clientY;
+    }
+  });
 
-// ~~~~~~~~~ EVENTS ~~~~~~~~~
-// worker.addEventListener("message", function (e) {
-//   if (e.data.msg === "render") {
-//     bgCtx.transferFromImageBitmap(e.data.bitmap);
-//   }
-// });
-
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
-window.addEventListener("mousemove", (event) => {
-  if (mouse.hovering === null) {
+  document.addEventListener("mousedown", (event) => {
     mouse.x = event.clientX;
     mouse.y = event.clientY;
-  }
-});
+    mouse.isDown = true;
+  });
 
-document.addEventListener("mousedown", (event) => {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
-  mouse.isDown = true;
-});
+  document.addEventListener("mouseup", (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    mouse.isDown = false;
+  });
 
-document.addEventListener("mouseup", (event) => {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
-  mouse.isDown = false;
-});
+  document.addEventListener("mouseover", (event) => {
+    const target = event.target;
+    if (target.tagName === "A" && target.className.indexOf("active") === -1) {
+      mouse.hovering = target.getBoundingClientRect();
+    } else {
+      mouse.hovering = null;
+    }
+  });
+};
 
-document.addEventListener("mouseover", (event) => {
-  const target = event.target;
-  if (target.tagName === "A" && target.className.indexOf("active") === -1) {
-    mouse.hovering = target.getBoundingClientRect();
-  } else {
-    mouse.hovering = null;
-  }
-});
+const canvasInit = () => {
+  return new Promise(_init);
+};
+
+export default canvasInit;
