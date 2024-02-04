@@ -21,16 +21,16 @@ class WebGPU {
       alphaMode: "premultiplied",
     });
 
-    const shader = await fetch("/canvas-controller/shader.wgsl").then((res) =>
-      res.text()
+    const vertexShader = await fetch("/canvas-controller/shaders/vertex.wgsl").then(
+      (res) => res.text()
     );
-    this.shader = this.device.createShaderModule({
+    this.vertexShader = this.device.createShaderModule({
       label: "Particle natural flow shader",
-      code: shader,
+      code: vertexShader,
     });
 
     const fragmentShader = await fetch(
-      "/canvas-controller/fragmentShader.wgsl"
+      "/canvas-controller/shaders/fragment.wgsl"
     ).then((res) => res.text());
     this.fragmentShader = this.device.createShaderModule({
       label: "fragment shader",
@@ -40,7 +40,7 @@ class WebGPU {
     this.pipeline = this.device.createRenderPipeline({
       layout: "auto",
       vertex: {
-        module: this.shader,
+        module: this.vertexShader,
         entryPoint: "main",
       },
       fragment: {
@@ -69,7 +69,7 @@ class WebGPU {
       colorAttachments: [
         {
           view: textureView,
-          clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+          clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 },
           loadOp: "clear",
           storeOp: "store",
         },
