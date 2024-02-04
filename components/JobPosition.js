@@ -18,7 +18,7 @@ class JobPosition extends HTMLElement {
 
   render(data) {
     this.querySelector("h4.title").innerHTML = `${data.title} <small>${data.subtitle}</small>`;
-    this.querySelector(".date-period").innerHTHML = data.datePeriod;
+    this.querySelector(".date-period").innerHTML = data.datePeriod;
 
     const techStack = this.querySelector(".tech-stack")
     for (const item of data.techStack) {
