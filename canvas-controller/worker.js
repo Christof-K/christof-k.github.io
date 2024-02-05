@@ -35,12 +35,13 @@ self.onmessage = (e) => {
     case "init":
       canvas = new OffscreenCanvas(e.data.width, e.data.height);
       controllerInstance = new Controller(canvas, e.data.mouse);
-      draw();
-      setTimeout(() => {
+
+      drawWithCallback(() => {
         self.postMessage({
-          type: "init-handshake"
-        })
-      }, 200)
+          type: "init-handshake",
+        });
+      });
+
       break;
     case "resizeCanvas":
       canvas.width = e.data.width;
@@ -53,9 +54,10 @@ self.onmessage = (e) => {
   }
 };
 
-const fps = 60;
+const fps = 45;
 let interval = 1000 / fps;
 let then;
+let drawCallback;
 
 const draw = (timestamp) => {
   self.requestAnimationFrame(draw);
@@ -72,5 +74,15 @@ const draw = (timestamp) => {
     });
 
     then = timestamp - (delta % interval);
+
+    if (drawCallback) {
+      drawCallback();
+      drawCallback = null;
+    }
   }
+};
+
+const drawWithCallback = (cb) => {
+  drawCallback = cb;
+  draw();
 };
