@@ -5,6 +5,18 @@ const MARGIN = 100;
 const blue = [25, 133, 161];
 const red = [255, 0, 0];
 
+class ParticleController {
+  acceleration = 0.0;
+  floatMode = false;
+  canvasWidth = 0;
+  canvasHeight = 0;
+
+  constructor(width, height) {
+    this.canvasWidth = width;
+    this.canvasHeight = height;
+  }
+}
+
 class Particle {
   x = 0;
   y = 0;
@@ -24,31 +36,18 @@ class Particle {
 
   specialUntil = 0;
   acc = 0.05;
-  acc_dist = 0.05;
 
-  floatMode = false;
-
-  constructor(x, y, canvas, ctx, mouse) {
+  constructor(x, y, mouse, controller) {
     this.x = x;
     this.y = y;
 
     this.r = 2;
-    this.floatMode = true;
     this.dest_r = this.r;
 
     this.mouse = mouse;
-    this.canvas = canvas;
-    this.ctx = ctx;
+    this.controller = controller;
 
     this.poke();
-  }
-
-  set acceleration(val) {
-    this.acc_dist = val;
-  }
-
-  set floatMode(val) {
-    this.floatMode = val;
   }
 
   isSpecial() {
@@ -72,23 +71,27 @@ class Particle {
   }
 
   poke() {
-    const pokeValX = (this.floatMode ? 3 : 50) * (this.canvas.width / 800);
-    const pokeValY = (this.floatMode ? 3 : 50) * (this.canvas.height / 800);
+    const pokeValX =
+      (this.controller.floatMode ? 3 : 50) *
+      (this.controller.canvasWidth / 500);
+    const pokeValY =
+      (this.controller.floatMode ? 3 : 50) *
+      (this.controller.canvasHeight / 500);
 
     this.dest_x = clampValue(
-      this.x + getRandomInt(pokeValX * -1, pokeValX),
+      this.x + getRandomInt(-pokeValX, pokeValX),
       0 - MARGIN,
-      this.canvas.width + MARGIN
+      this.controller.canvasWidth + MARGIN
     );
     this.dest_y = clampValue(
-      this.y + getRandomInt(pokeValY * -1, pokeValY),
+      this.y + getRandomInt(-pokeValY, pokeValY),
       0 - MARGIN,
-      this.canvas.height + MARGIN
+      this.controller.canvasHeight + MARGIN
     );
   }
 
   changeSize() {
-    if (!this.floatMode) {
+    if (!this.controller.floatMode) {
       this.dest_r = getRandomInt(this.min_r, this.max_r);
     }
   }
@@ -110,12 +113,12 @@ class Particle {
     }
   }
 
-  frameMoveCompute() {
-    if (getRandomInt(0, 20000) === 0 && !this.floatMode) {
+  nextStep() {
+    if (getRandomInt(0, 20000) === 0 && !this.controller.floatMode) {
       this.specialUntil = Date.now() + 3000;
     }
 
-    this.acc = lerp(this.acc, this.acc_dist, 0.01);
+    this.acc = lerp(this.acc, this.controller.acceleration, 0.01);
 
     if (!this.isResising()) {
       if (getRandomInt(0, 100) === 0) {
@@ -139,33 +142,28 @@ class Particle {
     }
   }
 
-  frameAppend() {
-    this.frameMoveCompute();
-    this.ctx.moveTo(this.x, this.y);
-    this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+  appendToPath(path) {
+    this.nextStep();
+    path.moveTo(this.x, this.y);
+    path.arc(this.x, this.y, this.r, 0, Math.PI * 2);
   }
 }
 
 class ParticleBg {
   init = false;
-  textVisible = true;
   particles = [];
 
   constructor(canvas, mouse) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.mouse = mouse;
+
+    this.controller = new ParticleController();
+    this.controller.canvasHeight = this.canvas.width;
+    this.controller.canvasWidth = this.canvas.height;
   }
 
-  set height(val) {
-    this.height = val;
-  }
-
-  set width(val) {
-    this.width = val;
-  }
-
-  pixelScan = () => {
+  pixelScan = (controller) => {
     const width = this.canvas.width;
     const height = this.canvas.height;
 
@@ -176,71 +174,77 @@ class ParticleBg {
         const index = (y * this.canvas.width + x) * 4;
         const alpha = pixels[index + 3];
         if (alpha > 0) {
-          this.particles.push(
-            new Particle(x, y, this.canvas, this.ctx, this.mouse)
-          );
+          this.particles.push(new Particle(x, y, this.mouse, controller));
         }
       }
     }
   };
 
-  animationFrameLoop() {
-    if (this.textVisible) {
-      const hw_path_org = HelloWorldPath();
-      const hw_path = new Path2D();
-      const matrix = new DOMMatrix();
-      const scale = this.canvas.width / 2000;
-      matrix.translateSelf(
-        this.canvas.width / 2 - (1500 / 2) * scale,
-        this.canvas.height / 2 - (350 / 2) * scale
-      );
-      matrix.scaleSelf(scale);
-      hw_path.addPath(hw_path_org, matrix);
+  onCanvasResize() {
+    this.controller.canvasHeight = this.canvas.height;
+    this.controller.canvasWidth = this.canvas.width;
+  }
 
-      this.ctx.fillStyle = "rgb(25, 133, 161)";
-      this.ctx.strokeStyle = "rgb(25, 133, 161)";
-      if (!this.init) {
-        this.ctx.fill(hw_path);
-      } else if (this.canvas.width < 1000) {
-        // this.ctx.stroke(hw_path);
+  _init() {
+    this.init = true;
+
+    this.controller.acceleration = 0.01;
+    this.controller.floatMode = true;
+
+    setTimeout(() => {
+      this.controller.acceleration = 0.01;
+      this.controller.floatMode = false;
+    }, 3000);
+
+    setTimeout(() => {
+      this.controller.acceleration = 0.01;
+    }, 6000);
+    
+
+    // todo: text to path
+    const hw_path_org = HelloWorldPath();
+    const hw_path = new Path2D();
+    const matrix = new DOMMatrix();
+    const scale = this.canvas.width / 2000;
+    matrix.translateSelf(
+      this.canvas.width / 2 - (1500 / 2) * scale,
+      this.canvas.height / 2 - (350 / 2) * scale
+    );
+    matrix.scaleSelf(scale);
+    hw_path.addPath(hw_path_org, matrix);
+
+    this.ctx.fillStyle = `rgb(${blue.join(",")})`;
+    this.ctx.fill(hw_path);
+
+    this.pixelScan(this.controller);
+  }
+
+  animationFrameLoop() {
+    if (!this.init) {
+      this._init();
+    }
+
+    const specialParticles = new Path2D();
+    const regularParticles = new Path2D();
+
+    for (let i = 0; i < this.particles.length; i++) {
+      const p = this.particles[i];
+      if (
+        this.controller.floatMode ||
+        p.isSpecial() ||
+        i % getRandomInt(0, 2) === 0
+      ) {
+        p.appendToPath(p.isSpecial() ? specialParticles : regularParticles);
       }
     }
 
-    if (!this.init) {
-      this.pixelScan();
-      this.init = true;
-
-      setTimeout(() => {
-        for (const p of this.particles) {
-          p.acceleration = 0.01;
-          p.floatMode = false;
-        }
-        this.textVisible = false;
-        setTimeout(() => {
-          for (const p of this.particles) {
-            p.acceleration = 0.005;
-          }
-        }, 3000);
-      }, 3000);
-    }
-
-    // special particles render
     this.ctx.beginPath();
-    this.ctx.fillStyle = `rgba(${red.join(",")}, 0.4)`;
-    this.ctx.lineWidth = 2;
-    for (const p of this.particles.filter((p) => p.isSpecial())) {
-      p.frameAppend();
-    }
-    this.ctx.fill();
 
-    // regular particles render
-    this.ctx.beginPath();
-    this.ctx.fillStyle = `rgba(${blue.join(",")}, 0.2)`;
-    this.ctx.lineWidth = 2;
-    for (const p of this.particles.filter((p) => !p.isSpecial())) {
-      p.frameAppend();
-    }
-    this.ctx.fill();
+    this.ctx.fillStyle = `rgba(${blue.join(",")}, 0.4)`;
+    this.ctx.fill(regularParticles);
+
+    this.ctx.fillStyle = `rgba(${red.join(",")}, 0.6)`;
+    this.ctx.fill(specialParticles);
   }
 }
 

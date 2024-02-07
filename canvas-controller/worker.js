@@ -15,6 +15,8 @@ class Controller {
     for (const [key, value] of Object.entries(mouse)) {
       this.mouse[key] = value;
     }
+
+
   }
 
   animationFrame() {
@@ -46,10 +48,10 @@ self.onmessage = (e) => {
     case "resizeCanvas":
       canvas.width = e.data.width;
       canvas.height = e.data.height;
+      controllerInstance.particleBg.onCanvasResize();
       break;
     case "mouseUpdate":
       controllerInstance.updateMouse(e.data.mouse);
-
       break;
   }
 };
