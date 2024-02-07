@@ -1,4 +1,3 @@
-import HelloWorldPath from "./hello-world-path.js";
 import { lerp, getRandomInt, clampValue } from "./helper.js";
 
 const MARGIN = 100;
@@ -152,6 +151,7 @@ class Particle {
 class ParticleBg {
   init = false;
   particles = [];
+  texts = ["Hello World"];
 
   constructor(canvas, mouse) {
     this.ctx = canvas.getContext("2d");
@@ -163,22 +163,6 @@ class ParticleBg {
     this.controller.canvasWidth = this.canvas.height;
   }
 
-  pixelScan = (controller) => {
-    const width = this.canvas.width;
-    const height = this.canvas.height;
-
-    const vpix = 3;
-    const pixels = this.ctx.getImageData(0, 0, width, height).data;
-    for (let y = 0; y < this.canvas.height; y += vpix) {
-      for (let x = 0; x < this.canvas.width; x += vpix) {
-        const index = (y * this.canvas.width + x) * 4;
-        const alpha = pixels[index + 3];
-        if (alpha > 0) {
-          this.particles.push(new Particle(x, y, this.mouse, controller));
-        }
-      }
-    }
-  };
 
   onCanvasResize() {
     this.controller.canvasHeight = this.canvas.height;
@@ -199,24 +183,37 @@ class ParticleBg {
     setTimeout(() => {
       this.controller.acceleration = 0.01;
     }, 6000);
-    
 
-    // todo: text to path
-    const hw_path_org = HelloWorldPath();
-    const hw_path = new Path2D();
-    const matrix = new DOMMatrix();
-    const scale = this.canvas.width / 2000;
-    matrix.translateSelf(
-      this.canvas.width / 2 - (1500 / 2) * scale,
-      this.canvas.height / 2 - (350 / 2) * scale
+    // generate text
+    this.ctx.textBaseline = "middle";
+    this.ctx.textAlign = "center";
+    this.ctx.font = `bold ${this.canvas.width / 10}px arial`;
+    this.ctx.fillText(
+      this.texts[getRandomInt(0, this.texts.length)],
+      this.canvas.width / 2,
+      this.canvas.height / 2
     );
-    matrix.scaleSelf(scale);
-    hw_path.addPath(hw_path_org, matrix);
 
-    this.ctx.fillStyle = `rgb(${blue.join(",")})`;
-    this.ctx.fill(hw_path);
+    const data32 = new Uint32Array(
+      this.ctx.getImageData(
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height
+      ).data.buffer
+    );
 
-    this.pixelScan(this.controller);
+    for (let i = 0; i < data32.length; i++) {
+      if (data32[i] & 0xff000000) {
+        if (i % parseInt(this.canvas.width / 200) === 0) {
+          const x = parseInt(i % this.canvas.width);
+          const y = parseInt(i / this.canvas.width);
+          this.particles.push(new Particle(x, y, this.mouse, this.controller));
+        }
+      }
+    }
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   animationFrameLoop() {

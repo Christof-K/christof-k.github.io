@@ -34,19 +34,15 @@ const _init = (resolve, reject) => {
     );
   };
 
-  let workerMouseTM = null;
   const mouse = new Mouse(
     wrapperDOM?.offsetLeft ?? 0,
     wrapperDOM?.offsetTop ?? 0,
     cursor,
     () => {
-      if (workerMouseTM) clearTimeout(workerMouseTM);
-      workerMouseTM = setTimeout(() => {
-        worker.postMessage({
-          type: "mouseUpdate",
-          mouse: mouse.arrOffsetVal,
-        });
-      }, 5);
+      worker.postMessage({
+        type: "mouseUpdate",
+        mouse: mouse.arrOffsetVal,
+      });
     }
   );
 
